@@ -1,11 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
+# Pisi Desktop Services
 # GUI Module ~ gui.py
 
-# Copyright (C) 2010, TUBITAK/UEKAE
-# 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# Forked from Pardus Desktop Services
+# Copyright (C) 2012-2015, PisiLinux
+#Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+#Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+
+
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -16,9 +20,7 @@
 import copy
 
 # Qt Libraries
-from PyQt4 import QtGui
-from PyQt4 import QtCore
-
+from PyQt5.QtCore import *
 # PREDEFINED POSITIONS
 # --------------------
 (TOPLEFT, TOPCENTER, TOPRIGHT, \
@@ -26,13 +28,14 @@ from PyQt4 import QtCore
  BOTLEFT, BOTCENTER, BOTRIGHT,
  CURRENT) = range(10)
 # --------------------
-FORWARD = QtCore.QTimeLine.Forward
-BACKWARD = QtCore.QTimeLine.Backward
+FORWARD = QTimeLine.Forward
+BACKWARD =QTimeLine.Backward
 # --------------------
 (IN, OUT, FINISHED) = range(3)
 # --------------------
 
-class PAbstractBox(QtGui.QWidget):
+
+class PAbstractBox(Qt):
     def __init__(self, parent):
 
         # Overlay widget, it should be initialized at first

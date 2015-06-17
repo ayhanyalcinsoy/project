@@ -1,21 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
+# Pisi Desktop Services
+# GUI Module ~ gui.py
 
-# Copyright (C) 2010-2011, TUBITAK/UEKAE
-# 2010 - Gökçen Eraslan <gokcen:pardus.org.tr>
-# 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
-
+# Forked from Pardus Desktop Services
+# Copyright (C) 2012-2015, PisiLinux
+# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+#
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 2 of the License, or (at your option)
 # any later version.
 
 # Qt Libraries
-from PyQt4 import Qt
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtXml import *
+from PyQt5.Qt import *
 
-class PApplicationContainer(Qt.QX11EmbedContainer):
+class PApplicaitonContainer(Qt.QX11EmbededContainer):
+#class PApplicationContainer(Qt.QX11EmbedContainer):
     def __init__(self, parent = None, process = None, args = ()):
         Qt.QX11EmbedContainer.__init__(self, parent)
 
