@@ -58,7 +58,7 @@ def update_messages():
         if FOR_KDE_4:
             os.system("pykde4uic -o ui/ui_%s.py ui/%s -g &s" % (filename.split(".")[0], filename, PROJECT))
         else:
-            os.system("pyuic4 -o ui/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
+            os.system("pyuic5 -o ui/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
 
     # Collect headers for desktop files
     for filename in glob.glob("data/*.desktop.in"):
@@ -118,7 +118,7 @@ class Build(build):
             if FOR_KDE_4:
                 os.system("pykde4uic -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
             else:
-                os.system("pyuic4 -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
+                os.system("pyuic5 -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
 
         print "Generating RCs..."
         for filename in glob.glob1("data", "*.qrc"):
@@ -238,9 +238,9 @@ setup(
       version           = about.version,
       description       = unicode(about.PACKAGE),
       license           = unicode('GPL'),
-      author            = "Pardus Developers",
-      author_email      = "bug@pardus.org.tr",
-      url               = "http://www.pardus.org.tr/eng/projects",
+      author            = "PisiLinux Developers",
+      author_email      = "admin@pisiLinux.org",
+      url               = "http://www.pisilinux.org",
       packages          = [''],
       package_dir       = {'': ''},
       data_files        = [],

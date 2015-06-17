@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2009 TUBITAK/UEKAE
+# Forked from Pardus User Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -15,10 +18,10 @@
 import os
 
 # PyQt
-from PyQt4 import QtCore
-from PyQt4 import QtGui
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QLineEdit
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QLineEdit
 
 #PDS
 from context import *

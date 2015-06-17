@@ -14,8 +14,8 @@
 import sys
 import dbus
 
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtCore
 
 from usermanager.about import *
 from usermanager.main import MainWidget
