@@ -15,9 +15,10 @@ import dbus
 from dbus.mainloop.qt import DBusQtMainLoop
 
 # Qt Libraries
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
-
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.Qt import *
 # UI
 from pds.ui.ui_connectionitem import Ui_ConnectionItem
 
@@ -25,7 +26,6 @@ from pds.ui.ui_connectionitem import Ui_ConnectionItem
 from pds.gui import *
 from pds.qiconloader import QIconLoader
 from pds.qprogressindicator import QProgressIndicator
-
 QIconLoader = QIconLoader()
 
 # NetworkManager

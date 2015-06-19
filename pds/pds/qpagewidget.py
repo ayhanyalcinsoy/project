@@ -4,36 +4,21 @@
 """ QPageWidget provides wizard like animated stack widget. """
 
 # QtCore Libraries
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QSize
-from PyQt4.QtCore import QRect
-from PyQt4.QtCore import QEvent
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import SIGNAL
-from PyQt4.QtCore import QTimeLine
-from PyQt4.QtCore import QEasingCurve
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
-# QtGui Libraries
-from PyQt4.QtGui import QFrame
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QLineEdit
-from PyQt4.QtGui import QBoxLayout
-from PyQt4.QtGui import QScrollArea
-from PyQt4.QtGui import QPushButton
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QResizeEvent
-
-__author__      = "Gökmen Göksel"
-__email__       = "gokmen@pardus.org.tr"
-__copyright__   = "Copyright 2011, TUBITAK/UEKAE"
+__author__      = "Ayhan Yalçınsoy, Muhammet Dilmaç"
+__email__       = "ayhanyalcinsoy@pisilinux.org, iletisim@muhammetdilmac.com.tr"
+__copyright__   = "Copyright 2012-2015, PisiLinux"
 
 __license__     = "GPLv2"
 __version__     = "0.1"
 
-# Pardus Desktop Services
-# Copyright (C) 2011, TUBITAK/UEKAE
-# 2011 - Gökmen Göksel <gokmen:pardus.org.tr>
+# Forked from Pardus Desktop Services
+# Copyright (C) 2012-2015, PisiLinux
+# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free

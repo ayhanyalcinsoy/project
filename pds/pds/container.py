@@ -14,15 +14,15 @@
 # Software Foundation; either version 2 of the License, or (at your option)
 # any later version.
 
+import os
 # Qt Libraries
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtXml import *
-from PyQt5.Qt import *
+
 
 class PApplicaitonContainer(Qt.QX11EmbededContainer):
-#class PApplicationContainer(Qt.QX11EmbedContainer):
     def __init__(self, parent = None, process = None, args = ()):
         Qt.QX11EmbedContainer.__init__(self, parent)
 
@@ -57,7 +57,7 @@ class PApplicaitonContainer(Qt.QX11EmbededContainer):
         event.accept()
 
     def _finished(self, exitCode, exitStatus):
-        self.emit(Qt.SIGNAL("processFinished"), exitCode, exitStatus)
+        self.emit(pyqtSignal("processFinished"), exitCode, exitStatus)
         if exitCode != 0:
             self._showMessage("%s process finished with code %s" % (self._process, exitCode))
         else:

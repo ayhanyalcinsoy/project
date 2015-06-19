@@ -16,10 +16,10 @@ from os import path
 from os import getenv
 from glob import glob
 
-# PyQt4 Core Libraries
-from PyQt4.QtCore import QFile, QFileInfo, QString, QDir, QSize, QSettings, Qt
-from PyQt4.QtGui import QPixmap, QPixmapCache, QIcon, QPainter
-from PyQt4 import QtNetwork
+# PyQt5 Core Libraries
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # Logging
 import logging
@@ -58,7 +58,7 @@ class QIconLoader:
 
         # Get possible Data Directories
         dataDirs = QFile.decodeName(getenv('XDG_DATA_DIRS'))
-        if dataDirs.isEmpty():
+        if dataDirs.isspace():    #isEmpty():
             dataDirs = QString('/usr/local/share/:/usr/share/')
 
         dataDirs.prepend(QDir.homePath() + ":")

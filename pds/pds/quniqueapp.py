@@ -13,14 +13,10 @@
 import sys
 import signal
 
-# PyQt4 Core Libraries
-from PyQt4 import QtNetwork
-from PyQt4.QtGui import QApplication
-
-from PyQt4.QtCore import QLocale
-from PyQt4.QtCore import QIODevice
-from PyQt4.QtCore import QTranslator
-from PyQt4.QtCore import QLibraryInfo
+# PyQt5 Core Libraries
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 class QUniqueApplication(QApplication):
 

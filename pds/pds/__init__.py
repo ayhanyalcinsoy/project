@@ -22,7 +22,7 @@ import piksemel
 import gettext
 
 # PyQt4 Core Libraries
-from PyQt4.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 # Logging
 import logging
