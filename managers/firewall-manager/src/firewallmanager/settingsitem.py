@@ -14,10 +14,10 @@
 #
 
 # PyQt
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from context import *
-from PyQt4.QtCore import SIGNAL
+from PyQt5.Qt import pyqtSignal
 # UI
 from firewallmanager.ui_settingsitem import Ui_SettingsItemWidget
 

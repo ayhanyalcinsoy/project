@@ -16,9 +16,9 @@ import sys
 import comar
 
 # Qt Stuff
-from PyQt4 import QtGui
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import *
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import *
 
 # Application Stuff
 from servicemanager.backend import ServiceIface

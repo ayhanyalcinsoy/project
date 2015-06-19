@@ -11,8 +11,8 @@
 # Please read the COPYING file.
 #
 
-from PyQt4.QtCore import QObject, SIGNAL
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 
 import config

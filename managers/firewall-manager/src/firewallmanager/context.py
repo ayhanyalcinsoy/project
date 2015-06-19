@@ -5,7 +5,7 @@ import pds
 import traceback
 from time import time
 from pds.qiconloader import QIconLoader
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 from context import *
 
 Pds = pds.Pds('firewall-manager', debug = True)

@@ -22,7 +22,7 @@ import servicemanager.context as ctx
 import servicemanager.about as about
 
 # Qt Stuff
-from PyQt4.QtCore import SIGNAL
+from PyQt5.QtCore import pyqtSignal
 
 # Enable plugin if session is Kde4
 if ctx.Pds.session == ctx.pds.Kde4:

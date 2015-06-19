@@ -11,19 +11,9 @@
 # Please read the COPYING file.
 #
 
-from PyQt4 import QtGui
-from PyQt4.QtGui import qApp
-from PyQt4.QtGui import QMenu
-from PyQt4.QtGui import QIcon
-from PyQt4.QtGui import QLabel
-from PyQt4.QtGui import QAction
-from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QShortcut
-from PyQt4.QtGui import QMainWindow
-from PyQt4.QtGui import QActionGroup
-from PyQt4.QtGui import QKeySequence
-
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 from ui_mainwindow import Ui_MainWindow
 

@@ -10,10 +10,9 @@
 #
 # Please read the COPYING file
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import SIGNAL
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import QSize
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from pmutils import *
 from pds.gui import *

@@ -12,8 +12,8 @@
 #
 
 # PyQt
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 # Settings item widget
 from firewallmanager.settingsitem import SettingsItemWidget

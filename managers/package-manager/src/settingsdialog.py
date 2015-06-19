@@ -13,14 +13,9 @@
 import re
 from os import path
 
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QTableWidgetItem
-from PyQt4.QtGui import QCheckBox
-from PyQt4.QtGui import QFileDialog
-from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtNetwork import QNetworkProxy
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 import pds
 import config

@@ -24,17 +24,9 @@ import backend
 
 from pmlogging import logger
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QTimer
-from PyQt4.QtCore import SIGNAL
-from PyQt4.QtCore import QEventLoop
-
-from PyQt4.QtGui import QCursor
-from PyQt4.QtGui import QPixmap
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtGui import QApplication
-
-from PyQt4.QtNetwork import QNetworkProxy
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 import pds
 from pds.qiconloader import QIconLoader

@@ -11,7 +11,7 @@
 # Please read the COPYING file.
 #
 
-from PyQt4.QtCore import QThread, SIGNAL
+from PyQt5.QtCore import *
 from pmutils import humanReadableSize as humanize
 
 class StatusUpdater(QThread):

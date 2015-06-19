@@ -11,7 +11,8 @@
 # Please read the COPYING file.
 #
 
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from pds.gui import *
 from pds.qprogressindicator import QProgressIndicator
 from ui_message import Ui_MessageBox
