@@ -13,8 +13,8 @@
 import sys
 import pardus.netutils
 
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 from PyKDE4 import kdecore
 from kaptan.screen import Screen

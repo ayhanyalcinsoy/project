@@ -10,8 +10,8 @@
 # Please read the COPYING file.
 #
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from PyKDE4.kdecore import ki18n, KStandardDirs, KGlobal, KConfig
 
 from kaptan.screen import Screen

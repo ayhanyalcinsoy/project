@@ -4,9 +4,11 @@
 import sys
 import os
 
-from PyQt4 import QtCore, QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from PyKDE4 import kdeui
-from PyQt4.QtCore import QTimeLine
+from PyQt5.QtGui import *
+from PyQt5.Qt import *
 from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs, KConfig
 
 from kaptan.screens.ui_kaptan import Ui_kaptan
@@ -15,7 +17,7 @@ from kaptan.tools import tools
 from kaptan.tools.progress_pie import DrawPie
 from kaptan.tools.kaptan_menu import Menu
 
-class Kaptan(QtGui.QWidget):
+class Kaptan(QWidget):
     def __init__(self, parent = None):
         QtGui.QWidget.__init__(self, parent)
         self.initializeGlobals()
@@ -36,11 +38,11 @@ class Kaptan(QtGui.QWidget):
 
     def signalHandler(self):
         ''' connects signals to slots '''
-        self.connect(self.ui.buttonNext, QtCore.SIGNAL("clicked()"), self.slotNext)
-        self.connect(self.ui.buttonApply, QtCore.SIGNAL("clicked()"), self.slotNext)
-        self.connect(self.ui.buttonBack, QtCore.SIGNAL("clicked()"), self.slotBack)
-        self.connect(self.ui.buttonFinish, QtCore.SIGNAL("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
-        self.connect(self.ui.buttonCancel, QtCore.SIGNAL("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
+        self.connect(self.ui.buttonNext, QtCore.pyqtSignal("clicked()"), self.slotNext)
+        self.connect(self.ui.buttonApply, QtCore.pyqtSignal("clicked()"), self.slotNext)
+        self.connect(self.ui.buttonBack, QtCore.pyqtSignal("clicked()"), self.slotBack)
+        self.connect(self.ui.buttonFinish, QtCore.pyqtSignal("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
+        self.connect(self.ui.buttonCancel, QtCore.pyqtSignal("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
 
     def initializeUI(self):
         ''' initializes the human interface '''

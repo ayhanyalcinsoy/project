@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QObject, SIGNAL
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 class Menu:
 

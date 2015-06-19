@@ -11,10 +11,10 @@
 #
 
 
-from PyQt4 import QtGui
-from PyQt4.QtGui import QFileDialog
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QFileDialog
 
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
 from PyKDE4.kdecore import ki18n, KStandardDirs, KGlobal, KConfig
 import os, sys, subprocess
 

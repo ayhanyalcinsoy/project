@@ -10,9 +10,9 @@
 # Please read the COPYING file.
 #
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
-from PyQt4.QtGui import QMessageBox
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QMessageBox
 from PyKDE4.kdecore import ki18n, KConfig
 
 import subprocess,os, dbus

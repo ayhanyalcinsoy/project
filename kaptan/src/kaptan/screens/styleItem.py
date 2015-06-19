@@ -12,8 +12,8 @@
 #
 
 # Qt Stuff
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 # Application Stuff
 from kaptan.screens.ui_scrStyleItem import Ui_StyleItemWidget

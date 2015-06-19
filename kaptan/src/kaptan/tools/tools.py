@@ -5,7 +5,7 @@ import os
 import dbus
 import glob
 import subprocess
-from PyQt4.QtGui import QDesktopWidget
+from PyQt5.QtWidgets import QDesktopWidget
 
 def DBus():
     if not dbus.get_default_main_loop():
