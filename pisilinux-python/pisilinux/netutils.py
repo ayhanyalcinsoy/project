@@ -18,8 +18,8 @@ import fcntl
 import struct
 import subprocess
 import time
-import pardus.csapi
-from pardus.deviceutils import idsQuery
+import pisilinux.csapi
+from pisilinux.deviceutils import idsQuery
 
 # From <bits/ioctls.h>
 SIOCADDRT = 0x890B          # add routing table entry
@@ -251,7 +251,7 @@ class IF:
         return os.system(" ".join(self.autoCmd))
 
     def stopAuto(self):
-        # dhcpcd does not create a pid file until it gets 
+        # dhcpcd does not create a pid file until it gets
         # an ip address so dhcpcd -k does not work while cancelling
         if subprocess.call(["/sbin/dhcpcd", "-k", self.name], stderr=file("/dev/null")):
             subprocess.call(["pkill","-f","%s" % " ".join(self.autoCmd)])
@@ -356,7 +356,7 @@ class Route:
     """Network routing control class"""
     def delete(self, gw, dst = "0.0.0.0", mask = "0.0.0.0"):
         try:
-            pardus.csapi.changeroute(SIOCDELRT, gw, dst, mask)
+            pisilinux.csapi.changeroute(SIOCDELRT, gw, dst, mask)
         except:
             pass
 
@@ -369,7 +369,7 @@ class Route:
         self.deleteDefault()
         self.delete(gw)
         try:
-            pardus.csapi.changeroute(SIOCADDRT, gw, dst, mask)
+            pisilinux.csapi.changeroute(SIOCADDRT, gw, dst, mask)
         except:
             pass
 

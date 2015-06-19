@@ -14,7 +14,7 @@
 """localedata module provides locale information."""
 
 import gettext
-__trans = gettext.translation('pardus-python', fallback=True)
+__trans = gettext.translation('pisilinux-python', fallback=True)
 _ = __trans.ugettext
 
 class Keymap:

@@ -250,7 +250,7 @@ def getPartitions():
             List of partitions which includes metadata of partition
             or None (if blkid not found) e.g.:
 
-            {'/dev/sda1': {label  :'PARDUS_ROOT', # (if exists)
+            {'/dev/sda1': {label  :'PİSİLİNUX_ROOT', # (if exists)
                            uuid   :'b3cf94b9-ed79-43e2-8b22-b9054a529f01',
                            fstype :'ext4'}, ... }
     """

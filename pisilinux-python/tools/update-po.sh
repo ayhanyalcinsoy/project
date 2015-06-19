@@ -1,6 +1,6 @@
 
-python tools/pygettext.py -o po/pardus-python.pot pardus
+python tools/pygettext.py -o po/pisilinux-python.pot pisilinux
 for lang in po/*.po
 do
-    msgmerge -U $lang po/pardus-python.pot
+    msgmerge -U $lang po/pisilinux-python.pot
 done

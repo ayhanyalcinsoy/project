@@ -11,7 +11,7 @@
 #
 
 modules_s = set(dir())
-from pardus import *
+from pisilinux import *
 modules_s = set(dir()) - modules_s - set(["modules_s"])
 
 import inspect
@@ -43,7 +43,7 @@ def print_modules(modules):
         print
 
         pkg_modules = [x[1] for x in inspect.getmembers(m, inspect.ismodule)
-                       if "site-packages/pardus" in `x[1]` and x[0]]
+                       if "site-packages/pisilinux" in `x[1]` and x[0]]
         print_modules(pkg_modules)
 
         print_functions(m)
@@ -53,5 +53,5 @@ def print_modules(modules):
 if __name__ == "__main__":
     modules = []
     for s in modules_s:
-        modules.append(__import__("pardus."+s, globals(), locals(), [""]))
-    print_modules(modules)    
+        modules.append(__import__("pisilinux."+s, globals(), locals(), [""]))
+    print_modules(modules)

@@ -9,14 +9,14 @@ import shutil
 from distutils.core import setup, Extension
 from distutils.command.install import install
 
-import pardus
+import pisilinux
 
 distfiles = """
     setup.py
-    pardus/*.py
-    pardus/*.c
-    pardus/xorg/*.py
-    pardus/xorg/*.c
+    pisilinux/*.py
+    pisilinux/*.c
+    pisilinux/xorg/*.py
+    pisilinux/xorg/*.c
     po/*.po
     po/*.pot
     tools/*.py
@@ -26,7 +26,7 @@ distfiles = """
 """
 
 def make_dist():
-    distdir = "pardus-python-%s" % pardus.versionString()
+    distdir = "pisilinux-python-%s" % pisilinux.versionString()
     list = []
     for t in distfiles.split():
         list.extend(glob.glob(t))
@@ -41,7 +41,7 @@ def make_dist():
             if not os.path.exists(dn):
                 os.mkdir(dn)
         shutil.copy(file_, os.path.join(distdir, file_))
-    os.popen("tar -czf %s %s" % ("pardus-python-" + pardus.versionString() + ".tar.gz", distdir))
+    os.popen("tar -czf %s %s" % ("pisilinux-python-" + pisilinux.versionString() + ".tar.gz", distdir))
     shutil.rmtree(distdir)
 
 if "dist" in sys.argv:
@@ -50,10 +50,10 @@ if "dist" in sys.argv:
 
 class Install(install):
     def finalize_options(self):
-        # NOTE: for Pardus distribution
-        if os.path.exists("/etc/pardus-release"):
-            self.install_platlib = '$base/lib/pardus'
-            self.install_purelib = '$base/lib/pardus'
+        # NOTE: for Pisilinux distribution
+        if os.path.exists("/etc/pisilinux-release"):
+            self.install_platlib = '$base/lib/pisilinux'
+            self.install_purelib = '$base/lib/pisilinux'
         install.finalize_options(self)
 
     def run(self):
@@ -72,22 +72,22 @@ class Install(install):
             destpath = os.path.join(self.root, "usr/share/locale/%s/LC_MESSAGES" % lang)
             if not os.path.exists(destpath):
                 os.makedirs(destpath)
-            shutil.copy("po/%s.mo" % lang, os.path.join(destpath, "pardus-python.mo"))
+            shutil.copy("po/%s.mo" % lang, os.path.join(destpath, "pisilinux-python.mo"))
 
-setup(name="pardus",
-      version=pardus.versionString(),
-      description="Python Modules for Pardus",
-      long_description="Python Modules for Pardus.",
+setup(name="pisilinux",
+      version=pisilinux.versionString(),
+      description="Python Modules for Pisilinux",
+      long_description="Python Modules for Pisilinux.",
       license="GNU GPL2",
-      author="Pardus Developers",
-      author_email="info@pardus.org.tr",
-      url="http://www.pardus.org.tr/",
-      packages = ['pardus', 'pardus.xorg'],
-      ext_modules = [Extension('pardus.xorg.capslock',
-                               sources=['pardus/xorg/capslock.c'],
+      author="Pisilinux Developers",
+      author_email="admin@pisilinux.org",
+      url="http://www.pisilinux.org/",
+      packages = ['pisilinux', 'pisilinux.xorg'],
+      ext_modules = [Extension('pisilinux.xorg.capslock',
+                               sources=['pisilinux/xorg/capslock.c'],
                                libraries=['X11']),
-                     Extension('pardus.csapi',
-                               sources=['pardus/csapi.c'],
+                     Extension('pisilinux.csapi',
+                               sources=['pisilinux/csapi.c'],
                                libraries=[]),
                     ],
       cmdclass = {'install' : Install})

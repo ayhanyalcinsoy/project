@@ -15,7 +15,7 @@
 import os
 import ConfigParser
 
-from pardus.fileutils import FileLock
+from pisilinux.fileutils import FileLock
 
 class iniDB:
     def __init__(self, db_file, db_mode=0600):
