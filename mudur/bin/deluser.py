@@ -8,7 +8,6 @@ import os
 import pwd
 import sys
 import dbus
-import time
 from optparse import OptionParser
 
 user = {"uid": None,
@@ -16,7 +15,7 @@ user = {"uid": None,
 }
 
 def fail(_message):
-    print _message
+    print(_message)
     sys.exit(1)
 
 def connectToDBus():
@@ -36,7 +35,7 @@ def delUser():
     try:
         obj.deleteUser(user["uid"], user["deletefiles"],
                     dbus_interface="tr.org.pardus.comar.User.Manager")
-    except dbus.DBusException, e:
+    except dbus.DBusException as e:
         fail("Error: %s." % e)
 
 

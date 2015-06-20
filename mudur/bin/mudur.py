@@ -17,11 +17,11 @@ Pardus booting and initialization system written in Python.
 import os
 import re
 import sys
-import stat
 import time
 import signal
 import gettext
 import subprocess
+from bin.mudur_cgroupfs import Cgroupfs
 
 ########
 # i18n #
@@ -141,12 +141,12 @@ def touch(filename):
             os.utime(filename, None)
         else:
             open(filename, "w").close()
-    except IOError, error:
+    except IOError as error:
         if error.errno != 13:
             raise
         else:
             return False
-    except OSError, error:
+    except OSError as error:
         if error.errno != 13:
             raise
         else:
@@ -382,7 +382,7 @@ class Config:
         # in that case it is more likely they'll prefer English.
         lang = self.options["language"]
         if not LANGUAGES.has_key(lang):
-            print "Unknown language option '%s'" % lang
+            print("Unknown language option '%s'" % lang)
             lang = "en"
             self.options["language"] = lang
 
@@ -395,7 +395,7 @@ class Config:
         try:
             return self.options[key]
         except KeyError:
-            print "Unknown option '%s' requested" % key
+            print("Unknown option '%s' requested" % key)
             time.sleep(3)
 
     def get_fstab_entry_with_mountpoint(self, mountpoint):
@@ -490,11 +490,11 @@ class Ui:
 
     def greet(self):
         """Dump release information, sets unicode mode."""
-        print self.UNICODE_MAGIC
+        print(self.UNICODE_MAGIC)
         if os.path.exists("/etc/pisilinux-release"):
             release = load_file("/etc/pisilinux-release").rstrip("\n")
-            print "\x1b[1m  %s  \x1b[0;36mhttp://www.pisilinux.org\x1b[0m" \
-                    % release
+            print("\x1b[1m  %s  \x1b[0;36mhttp://www.pisilinux.org\x1b[0m" \
+                    % release)
         else:
             self.error(_("Cannot find /etc/pisilinux-release"))
         print
@@ -608,7 +608,7 @@ def set_unicode_mode():
     lang = CONFIG.get("language")
     language = LANGUAGES[lang]
 
-    for i in xrange(1, int(CONFIG.get("tty_number")) + 1):
+    for i in range(1, int(CONFIG.get("tty_number")) + 1):
         try:
             if os.path.exists("/dev/tty%s" % i):
                 with open("/dev/tty%s" % i, "w") as _file:
@@ -631,7 +631,7 @@ def fork_handler():
 
     # Set umask to a sane value
     # (other and group has no write permission by default)
-    os.umask(022)
+    os.umask(0o22)
     # Detach from controlling terminal
     try:
         tty_fd = os.open("/dev/tty", os.O_RDWR)
@@ -691,7 +691,7 @@ def start_services(extras=None):
         # Start network service first
         try:
             manage_service("NetworkManager", "ready")
-        except Exception, error:
+        except Exception as error:
             UI.warn(_("Unable to start network:\n  %s") % error)
 
         # Almost everything depends on logger, so start manually
@@ -919,7 +919,7 @@ def check_root_filesystem():
                 UI.warn(_("Filesystem repaired, but reboot needed!"))
                 i = 0
                 while i < 4:
-                    print "\07"
+                    print("\07")
                     time.sleep(1)
                     i += 1
                 UI.warn(_("Rebooting in 10 seconds..."))
@@ -1025,10 +1025,11 @@ def mount_tmpfs_run():
             break
     df.close()
     run_full("/bin/mount", "-t", "tmpfs", "-o", "nodev,nosuid,size=10%,mode=755", "tmpfs", "/run")
+    c = Cgroupfs()
 
 def mount_remote_filesystems():
     """Mounts remote filesystems."""
-    from pardus.fstabutils import Fstab
+    from lib.fstab import Fstab
     fstab = Fstab()
     if fstab.contains_remote_mounts():
         UI.info(_("Mounting remote filesystems"))
@@ -1180,11 +1181,11 @@ def cleanup_tmp():
 
     create_directory("/tmp/.ICE-unix")
     os.chown("/tmp/.ICE-unix", 0, 0)
-    os.chmod("/tmp/.ICE-unix", 01777)
+    os.chmod("/tmp/.ICE-unix", 0o1777)
 
     create_directory("/tmp/.X11-unix")
     os.chown("/tmp/.X11-unix", 0, 0)
-    os.chmod("/tmp/.X11-unix", 01777)
+    os.chmod("/tmp/.X11-unix", 0o1777)
 
 ########################################
 # System time/Clock management methods #
@@ -1307,10 +1308,10 @@ def except_hook(e_type, e_value, e_trace):
     """Hook that intercepts and handles exceptions."""
     import traceback
     print
-    print _("An internal error occured. Please report to the bugs.pisilinux.org"
-            "with following information:").encode("utf-8")
+    print(_("An internal error occured. Please report to the bugs.pisilinux.org"
+            "with following information:").encode("utf-8"))
     print
-    print e_type, e_value
+    print(e_type, e_value)
     traceback.print_tb(e_trace)
     print
     run_full("/sbin/sulogin")
@@ -1333,7 +1334,7 @@ def main():
     signal.signal(signal.SIGQUIT, signal.SIG_IGN)
     signal.signal(signal.SIGTSTP, signal.SIG_IGN)
     sys.excepthook = except_hook
-    os.umask(022)
+    os.umask(0o22)
 
     # Setup path just in case
     os.environ["PATH"] = "/bin:/sbin:/usr/bin:/usr/sbin:" + os.environ["PATH"]
@@ -1399,14 +1400,14 @@ def main():
 
         run("/bin/chgrp", "utmp", "/run/utmp", "/var/log/wtmp")
 
-        os.chmod("/run/utmp", 0664)
-        os.chmod("/var/log/wtmp", 0664)
+        os.chmod("/run/utmp", 0o664)
+        os.chmod("/var/log/wtmp", 0o664)
 
         # Create tmpfiles
         UI.info(_("Creating tmpfiles"))
         if not os.path.isdir("/run/tmpfiles.d"): create_directory("/run/tmpfiles.d")
         run("/usr/bin/kmod", "static-nodes", "--format=tmpfiles", "--output=/run/tmpfiles.d/kmod.conf")
-        out = capture("/sbin/mudur_tmpfiles.py")[0].strip().split("\n")
+        out = [line for line in capture("/sbin/mudur_tmpfiles.py", "--boot")[0].split("\n") if line.strip()]
         if out: LOGGER.log("Errors during tmpfiles creation.\n\t%s" % "\n\t".join(out))
         run("mount", "-t", "tmpfs", "tmpfs", "/dev/shm")
 

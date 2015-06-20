@@ -37,6 +37,10 @@ def write_file(path, content, mode = "w"):
     open(path, mode).write(content)
 
 def create(type, path, mode, uid, gid, age, arg):
+    if type == "d" and \
+        os.path.isdir(path) and \
+        (not uid == os.stat(path).st_uid or not gid == os.stat(path).st_gid):
+        type = "D"
     if type == "L":
         if not os.path.islink(path): os.symlink(arg, path)
         return
@@ -59,6 +63,7 @@ def create(type, path, mode, uid, gid, age, arg):
             os.makedirs(os.path.dirname(path))
             os.chown(os.path.dirname(path), uid, gid)
         write_file(path, arg, mode = "a" if type == "f" else "w")
+        os.chmod(path, mode)
         os.chown(path, uid, gid)
 
 USAGE = """\
@@ -70,11 +75,12 @@ USAGE = """\
 """ % (sys.argv[0], sys.argv[0], "; ".join(DEFAULT_CONFIG_DIRS_SO))
     
 def usage():
-    print USAGE
+    print(USAGE)
     sys.exit(0)
 
 if __name__ == "__main__":
     if ("-h" or "--help") in sys.argv: usage()
+    boot = True if "--boot" in sys.argv else False
 
     config_files = {}
     errors = []
@@ -86,13 +92,14 @@ if __name__ == "__main__":
             config_files[head] = [tail]
 
     if sys.argv[1:]:
-        for arg in sys.argv[1:]:
-            (head, tail) = os.path.split(arg)
-            if not tail.endswith(".conf"): errors.append("%s is not .conf file" % tail)
-            elif not head: errors.append("Full path is needed for %s args." % sys.argv[0])
-            elif not os.path.isdir(head): errors.append("Path %s not exists." % head)
-            elif not os.path.isfile(arg): errors.append("File %s not exists." % arg)
-            add_config_file(head, tail)
+        if sys.argv[1:] and not boot:
+            for arg in sys.argv[1:]:
+                (head, tail) = os.path.split(arg)
+                if not tail.endswith(".conf"): errors.append("%s is not .conf file" % tail)
+                elif not head: errors.append("Full path is needed for %s args." % sys.argv[0])
+                elif not os.path.isdir(head): errors.append("Path %s not exists." % head)
+                elif not os.path.isfile(arg): errors.append("File %s not exists." % arg)
+                add_config_file(head, tail)
     else:
         all_files_names = []
         for head in DEFAULT_CONFIG_DIRS_SO:
@@ -125,6 +132,9 @@ if __name__ == "__main__":
                     if i == "-": fields[n] = ""
                 if not fields[3]: fields[3] = "root"
                 if not fields[4]: fields[4] = "root"
+                if fields[0].endswith("!"):
+                    if not boot: continue
+                    else: fields[0] = fields[0].replace("!", "")
                 if not fields[0] in ["c", "d", "D", "f", "F", "L", "w"]: errors.append("%s - wrong type in file: %s" % (fields[0], os.path.join(d, f)))
                 elif fields[0] == "L":
                     if not fields[6]: errors.append("No arg for type 'L' specified in file: %s" % os.path.join(d, f))
@@ -145,4 +155,4 @@ if __name__ == "__main__":
                 # 
                 if len(errors) == cerr: create(*fields)
 
-    print "\n".join(errors)
+    print("\n".join(errors))

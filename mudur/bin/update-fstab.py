@@ -78,7 +78,7 @@ def blockNameByUuid(uuid):
 
 def getLocale():
     try:
-        for line in file("/etc/env.d/03locale"):
+        for line in open("/etc/env.d/03locale"):
             if "LC_ALL" in line:
                 return line[7:].strip()
     except:
@@ -131,7 +131,7 @@ class Fstab:
         self.partitions = None
         self.labels = {}
         self.uuids = {}
-        for line in file(path):
+        for line in open(path):
             if line.strip() != "" and not line.startswith('#'):
                 self.entries.append(FstabEntry(line))
 
@@ -160,7 +160,7 @@ class Fstab:
             if entry.mount_point != "none" and not os.path.exists(entry.mount_point):
                 os.makedirs(entry.mount_point)
 
-        f = file(path, "w")
+        f = open(path, "w")
         f.write(self.comment)
         f.write(str(self))
         f.write("\n")
@@ -258,13 +258,13 @@ class Fstab:
 def refresh_fstab(path=None, debug=False):
     f = Fstab(path)
     if debug:
-        print "Fstab file:", f.path
-        print "--- Current table ---"
-        print f
+        print("Fstab file:", f.path)
+        print("--- Current table ---")
+        print(f)
     f.refresh()
     if debug:
-        print "--- Refreshed table ---"
-        print f
+        print("--- Refreshed table ---")
+        print(f)
     else:
         f.write()
 
