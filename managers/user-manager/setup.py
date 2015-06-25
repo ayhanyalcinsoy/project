@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus User Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -26,13 +29,6 @@ from distutils.command.clean import clean
 from distutils.command.install import install
 
 PROJECT = about.appName
-FOR_KDE_4=False
-
-if 'kde4' in sys.argv:
-    sys.argv.remove('kde4')
-    FOR_KDE_4=True
-    print 'UI files will be created for KDE 4.. '
-
 
 def makeDirs(directory):
     if not os.path.exists(directory):
@@ -43,7 +39,7 @@ def makeDirs(directory):
 
 def remove(path):
     if os.path.exists(path):
-        print ' removing: ', path
+        print(' removing: '), path
         if os.path.isdir(path):
             shutil.rmtree(path)
         else:
@@ -55,10 +51,7 @@ def update_messages():
     # Collect UI files
     filelist = []
     for filename in glob.glob1("ui", "*.ui"):
-        if FOR_KDE_4:
-            os.system("pykde4uic -o ui/ui_%s.py ui/%s -g &s" % (filename.split(".")[0], filename, PROJECT))
-        else:
-            os.system("pyuic5 -o ui/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
+        os.system("pyuic5 -o ui/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
 
     # Collect headers for desktop files
     for filename in glob.glob("data/*.desktop.in"):
@@ -84,7 +77,7 @@ def update_messages():
 
     # Update PO files
     for item in glob.glob1("po", "*.po"):
-        print "Updating .. ", item
+        print("Updating .. "), item
         os.system("msgmerge --update --no-wrap --sort-by-file po/%s po/%s.pot" % (item, PROJECT))
 
     # Cleanup
@@ -102,27 +95,24 @@ class Build(build):
         os.system("rm -rf build")
 
         # Copy codes
-        print "Copying PYs..."
+        print("Copying PYs...")
         os.system("cp -R src/ build/")
 
         # Copy icons
-        print "Copying Images..."
+        print("Copying Images...")
         os.system("cp -R data/ build/")
 
-        print "Generating .desktop files..."
+        print("Generating .desktop files...")
         for filename in glob.glob("data/*.desktop.in"):
             os.system("intltool-merge -d po %s %s" % (filename, filename[:-3]))
 
-        print "Generating UIs..."
+        print("Generating UIs...")
         for filename in glob.glob1("ui", "*.ui"):
-            if FOR_KDE_4:
-                os.system("pykde4uic -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
-            else:
-                os.system("pyuic5 -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
+            os.system("pyuic5 -o build/usermanager/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
 
-        print "Generating RCs..."
+        print("Generating RCs...")
         for filename in glob.glob1("data", "*.qrc"):
-            os.system("pyrcc4 data/%s -o build/%s_rc.py" % (filename, filename.split(".")[0]))
+            os.system("pyrcc5 data/%s -o build/%s_rc.py" % (filename, filename.split(".")[0]))
 
 class Install(install):
     def run(self):
@@ -142,11 +132,10 @@ class Install(install):
 
         locale_dir = os.path.join(root_dir, "locale")
         apps_dir = os.path.join(root_dir, "applications")
-        services_dir = os.path.join(root_dir, "kde4/services")
         project_dir = os.path.join(root_dir, PROJECT)
 
         # Make directories
-        print "Making directories..."
+        print("Making directories...")
         makeDirs(bin_dir)
         makeDirs(locale_dir)
         makeDirs(apps_dir)
@@ -154,19 +143,16 @@ class Install(install):
         #makeDirs(services_dir)
 
         # Install desktop files
-        print "Installing desktop files..."
-        if FOR_KDE_4:
-            shutil.copy("data/kcm_%s.desktop" % PROJECT, apps_dir)
-        else:
-            shutil.copy("data/%s.desktop" % PROJECT, apps_dir)
+        print("Installing desktop files...")
+        shutil.copy("data/%s.desktop" % PROJECT, apps_dir)
         shutil.rmtree('build/data')
 
         # Install codes
-        print "Installing codes..."
+        print("Installing codes...")
         os.system("cp -R build/* %s/" % project_dir)
 
         # Install locales
-        print "Installing locales..."
+        print("Installing locales...")
         for filename in glob.glob1("po", "*.po"):
             lang = filename.rsplit(".", 1)[0]
             rst2doc(lang)
@@ -175,16 +161,12 @@ class Install(install):
             shutil.copy("po/%s.mo" % lang, os.path.join(locale_dir, "%s/LC_MESSAGES" % lang, "%s.mo" % PROJECT))
         rst2doc('en')
         if os.path.exists("help"):
-            print "Installing help files..."
+            print("Installing help files...")
             os.system("cp -R help %s/" % project_dir)
 
-        # Rename
-        # print "Renaming application.py..."
-        # shutil.move(os.path.join(project_dir, "main.py"), os.path.join(project_dir, "%s.py" % PROJECT))
-
         # Modes
-        print "Changing file modes..."
-        os.chmod(os.path.join(project_dir, "%s.py" % PROJECT), 0755)
+        print("Changing file modes...")
+        os.chmod(os.path.join(project_dir, "%s.py" % PROJECT), 0o755)
 
         # Symlink
         try:
@@ -207,25 +189,23 @@ class Uninstall(Command):
 
         locale_dir = os.path.join(root_dir, "locale")
         apps_dir = os.path.join(root_dir, "applications")
-        services_dir = os.path.join(root_dir, "kde4/services")
         project_dir = os.path.join(root_dir, PROJECT)
 
-        print 'Uninstalling ...'
+        print('Uninstalling ...')
         remove(project_dir)
         remove(apps_dir +"/%s.desktop" % PROJECT)
-        #remove(services_dir +"/kcm_%s.desktop" % PROJECT)
         for filename in glob.glob1('po', '*.po'):
             lang = filename.rsplit(".", 1)[0]
             remove(os.path.join(locale_dir, "%s/LC_MESSAGES" % lang, "%s.mo" % PROJECT))
 
 class Clean(clean):
     def run(self):
-        print 'Cleaning ...'
+        print('Cleaning ...')
         os.system('find -name *.pyc|xargs rm -rvf')
         os.system('find -name *.mo|xargs rm -rvf')
         for dirs in ('build', 'dist'):
             if os.path.exists(dirs):
-                print ' removing: ', dirs
+                print(' removing: '), dirs
                 shutil.rmtree(dirs)
         clean.run(self)
 
@@ -236,8 +216,8 @@ if "update_messages" in sys.argv:
 setup(
       name              = PROJECT,
       version           = about.version,
-      description       = unicode(about.PACKAGE),
-      license           = unicode('GPL'),
+      description       = about.PACKAGE,
+      license           = 'GPL',
       author            = "PisiLinux Developers",
       author_email      = "admin@pisiLinux.org",
       url               = "http://www.pisilinux.org",

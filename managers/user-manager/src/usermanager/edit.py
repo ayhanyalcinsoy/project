@@ -3,8 +3,8 @@
 #
 # Forked from Pardus User Manager
 # Copyright (C) 2012-2015, PisiLinux
-# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
-# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -18,10 +18,9 @@
 import os
 
 # PyQt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 #PDS
 from context import *
@@ -36,13 +35,13 @@ from usermanager.utility import nickGuess
 # PolicyKit
 import polkit
 
-class PolicyItem(QtGui.QTreeWidgetItem):
+class PolicyItem(QTreeWidgetItem):
     def __init__(self, parent, text, action_id):
-        QtGui.QTreeWidgetItem.__init__(self, parent)
+        QTreeWidgetItem.__init__(self, parent)
         self.action_id = action_id
         self.type = 0
         self.setText(0, text)
-        self.setIcon(0,KIcon("security-medium"))
+        self.setIcon(0,QIcon("security-medium"))
 
     def getAction(self):
         return self.action_id
@@ -50,19 +49,19 @@ class PolicyItem(QtGui.QTreeWidgetItem):
     def setType(self, type_):
         self.type = type_
         if type_ == -1:
-            self.setIcon(0,KIcon("security-low"))
+            self.setIcon(0,QIcon("security-low"))
         elif type_ == 0:
-            self.setIcon(0,KIcon("security-medium"))
+            self.setIcon(0,QIcon("security-medium"))
         elif type_ == 1:
-            self.setIcon(0,KIcon("security-high"))
+            self.setIcon(0,QIcon("security-high"))
 
     def getType(self):
         return self.type
 
 
-class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
+class EditUserWidget(QWidget, Ui_EditUserWidget):
     def __init__(self, parent):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
 
         # List of unavailable nicks
@@ -75,26 +74,26 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         self.buildPolicies()
 
         # Warning icon
-        self.labelSign.setPixmap(KIcon("process-stop").pixmap(32, 32))
+        self.labelSign.setPixmap(QIcon("process-stop").pixmap(32, 32))
         self.labelSign.hide()
 
         # Signals
-        self.connect(self.checkAutoId, QtCore.SIGNAL("stateChanged(int)"), self.slotCheckAuto)
-        self.connect(self.lineUsername, QtCore.SIGNAL("textEdited(const QString&)"), self.slotUsernameChanged)
-        self.connect(self.lineFullname, QtCore.SIGNAL("textEdited(const QString&)"), self.slotFullnameChanged)
-        self.connect(self.listGroups, QtCore.SIGNAL("itemClicked(QListWidgetItem*)"), self.slotGroupSelected)
-        self.connect(self.treeAuthorizations, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)"), self.slotPolicySelected)
-        self.connect(self.radioAuthNo, QtCore.SIGNAL("toggled(bool)"), self.slotPolicyChanged)
-        self.connect(self.radioAuthDefault, QtCore.SIGNAL("toggled(bool)"), self.slotPolicyChanged)
-        self.connect(self.radioAuthYes, QtCore.SIGNAL("toggled(bool)"), self.slotPolicyChanged)
-        self.connect(self.checkAdmin, QtCore.SIGNAL("stateChanged(int)"), self.slotAdmin)
-        self.connect(self.pushAuth, QtCore.SIGNAL("clicked()"), self.slotAuth)
+        self.connect(self.checkAutoId, pyqtSignal("stateChanged(int)"), self.slotCheckAuto)
+        self.connect(self.lineUsername, pyqtSignal("textEdited(const QString&)"), self.slotUsernameChanged)
+        self.connect(self.lineFullname, pyqtSignal("textEdited(const QString&)"), self.slotFullnameChanged)
+        self.connect(self.listGroups, pyqtSignal("itemClicked(QListWidgetItem*)"), self.slotGroupSelected)
+        self.connect(self.treeAuthorizations, pyqtSignal("currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)"), self.slotPolicySelected)
+        self.connect(self.radioAuthNo, pyqtSignal("toggled(bool)"), self.slotPolicyChanged)
+        self.connect(self.radioAuthDefault, pyqtSignal("toggled(bool)"), self.slotPolicyChanged)
+        self.connect(self.radioAuthYes, pyqtSignal("toggled(bool)"), self.slotPolicyChanged)
+        self.connect(self.checkAdmin, pyqtSignal("stateChanged(int)"), self.slotAdmin)
+        self.connect(self.pushAuth, pyqtSignal("clicked()"), self.slotAuth)
 
-        self.connect(self.lineFullname, QtCore.SIGNAL("textEdited(const QString&)"), self.checkFields)
-        self.connect(self.linePassword, QtCore.SIGNAL("textEdited(const QString&)"), self.checkFields)
-        self.connect(self.linePasswordAgain, QtCore.SIGNAL("textEdited(const QString&)"), self.checkFields)
-        self.connect(self.lineUsername, QtCore.SIGNAL("textEdited(const QString&)"), self.checkFields)
-        self.connect(self.lineHomeDir, QtCore.SIGNAL("textEdited(const QString&)"), self.checkFields)
+        self.connect(self.lineFullname, pyqtSignal("textEdited(const QString&)"), self.checkFields)
+        self.connect(self.linePassword, pyqtSignal("textEdited(const QString&)"), self.checkFields)
+        self.connect(self.linePasswordAgain, pyqtSignal("textEdited(const QString&)"), self.checkFields)
+        self.connect(self.lineUsername, pyqtSignal("textEdited(const QString&)"), self.checkFields)
+        self.connect(self.lineHomeDir, pyqtSignal("textEdited(const QString&)"), self.checkFields)
 
         #self.filterAuthorizations.setTreeWidget(self.treeAuthorizations)
         #self.filterGroups.setListWidget(self.listGroups)
@@ -118,7 +117,7 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         self.advancedGroup.hide()
         self.comboShell.clear()
         self.comboShell.addItems(self.available_shells)
-        self.emit(QtCore.SIGNAL("buttonStatusChanged(int)"),1)
+        self.emit(pyqtSignal("buttonStatusChanged(int)"),1)
         for index in xrange(self.treeAuthorizations.topLevelItemCount()):
             self.treeAuthorizations.collapseItem(self.treeAuthorizations.topLevelItem(index))
 
@@ -136,14 +135,14 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         # do not show policies require policy type yes or no, only the ones require auth_* type
         allActions = filter(lambda x: polkit.action_info(x)['policy_active'].startswith("auth_"),polkit.action_list())
         for _category in categories.keys():
-            parent_item = QtGui.QTreeWidgetItem(self.treeAuthorizations)
-            parent_item.setIcon(0,KIcon(categories[_category][1]))
-            parent_item.setText(0, unicode(categories[_category][0]))
+            parent_item = QTreeWidgetItem(self.treeAuthorizations)
+            parent_item.setIcon(0,QIcon(categories[_category][1]))
+            parent_item.setText(0, categories[_category][0])
             for category in _category.split('|'):
                 catactions = filter(lambda x: x.startswith(category), allActions)
                 for action_id in catactions:
                     info = polkit.action_info(action_id)
-                    item = PolicyItem(parent_item, unicode(info["description"]), action_id)
+                    item = PolicyItem(parent_item, info["description"], action_id)
                     self.actionItems[action_id] = item
 
     def getAuthorizations(self):
@@ -173,11 +172,11 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
 
     def setId(self, id):
         if id != -1:
-            self.checkAutoId.setCheckState(QtCore.Qt.Unchecked)
+            self.checkAutoId.setCheckState(Qt.Unchecked)
             self.checkAutoId.hide()
             self.spinId.setEnabled(False)
         else:
-            self.checkAutoId.setCheckState(QtCore.Qt.Checked)
+            self.checkAutoId.setCheckState(Qt.Checked)
             self.checkAutoId.show()
             self.spinId.setEnabled(False)
         self.spinId.setValue(id)
@@ -186,24 +185,24 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         self.nicklist = nicklist
 
     def getUsername(self):
-        return unicode(self.lineUsername.text())
+        return self.lineUsername.text()
 
     def setUsername(self, username):
-        self.lineUsername.setText(unicode(username))
+        self.lineUsername.setText(username)
         self.lineUsername.setEnabled(False)
 
     def getFullname(self):
-        return unicode(self.lineFullname.text())
+        return self.lineFullname.text()
 
     def setFullname(self, fullname):
-        self.lineFullname.setText(unicode(fullname))
+        self.lineFullname.setText(fullname)
 
     def setHomeDir(self, homedir):
-        self.lineHomeDir.setText(unicode(homedir))
+        self.lineHomeDir.setText(homedir)
         self.lineHomeDir.setEnabled(False)
 
     def getHomeDir(self):
-        return unicode(self.lineHomeDir.text())
+        return self.lineHomeDir.text()
 
     def setShell(self, shell):
         shell_index = self.comboShell.findText(shell)
@@ -222,7 +221,7 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
 
     def getPassword(self):
         if self.linePassword.isModified() and self.linePassword.text() == self.linePasswordAgain.text():
-            return unicode(self.linePassword.text())
+            return self.linePassword.text()
         return ""
 
     def setGroups(self, all_groups, selected_groups):
@@ -230,17 +229,17 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         self.comboMainGroup.clear()
         for group in all_groups:
             # Groups
-            item = QtGui.QListWidgetItem(self.listGroups)
+            item = QListWidgetItem(self.listGroups)
             item.setText(group)
             if group in selected_groups:
-                item.setCheckState(QtCore.Qt.Checked)
+                item.setCheckState(Qt.Checked)
                 # Add selected items to main group combo
                 self.comboMainGroup.addItem(group)
                 # Wheel group?
                 if group == "wheel":
-                    self.checkAdmin.setCheckState(QtCore.Qt.Checked)
+                    self.checkAdmin.setCheckState(Qt.Checked)
             else:
-                item.setCheckState(QtCore.Qt.Unchecked)
+                item.setCheckState(Qt.Unchecked)
         # Select main group
         if selected_groups:
             self.comboMainGroup.setCurrentIndex(self.comboMainGroup.findText(selected_groups[0]))
@@ -249,10 +248,10 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         groups = []
         for index in range(self.listGroups.count()):
             item = self.listGroups.item(index)
-            if item.checkState() == QtCore.Qt.Checked:
-                groups.append(unicode(item.text()))
+            if item.checkState() == Qt.Checked:
+                groups.append(item.text())
         # Main group
-        main_group = unicode(self.comboMainGroup.currentText())
+        main_group = self.comboMainGroup.currentText()
         groups.remove(main_group)
         groups.insert(0, main_group)
         return groups
@@ -272,7 +271,7 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         self.slotPolicySelected(self.treeAuthorizations.currentItem())
 
     def slotCheckAuto(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.spinId.setEnabled(False)
             self.spinId.setValue(-1)
         else:
@@ -309,23 +308,23 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
 
     def slotGroupSelected(self):
         item = self.listGroups.currentItem()
-        if item.checkState() == QtCore.Qt.Unchecked:
+        if item.checkState() == Qt.Unchecked:
             # You can't remove last item
             if not self.checkLastItem():
-                item.setCheckState(QtCore.Qt.Checked)
+                item.setCheckState(Qt.Checked)
                 return
             # Remove from main group combo
             index = self.comboMainGroup.findText(item.text())
             self.comboMainGroup.removeItem(index)
             # Wheel group?
             if item.text() == "wheel":
-                self.checkAdmin.setCheckState(QtCore.Qt.Unchecked)
+                self.checkAdmin.setCheckState(Qt.Unchecked)
         else:
             # Add to main group combo
             self.comboMainGroup.addItem(item.text())
             # Wheel group?
             if item.text() == "wheel":
-                self.checkAdmin.setCheckState(QtCore.Qt.Checked)
+                self.checkAdmin.setCheckState(Qt.Checked)
 
     def slotPolicySelected(self, item, previous = None):
         if not item:
@@ -348,10 +347,10 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
             item.setType(1)
 
     def slotAdmin(self, state):
-        if state == QtCore.Qt.Unchecked:
+        if state == Qt.Unchecked:
             # You can't remove last item
             if not self.checkLastItem():
-                self.checkAdmin.setCheckState(QtCore.Qt.Checked)
+                self.checkAdmin.setCheckState(Qt.Checked)
                 return
             # Remove from main group combo
             self.comboMainGroup.removeItem(self.comboMainGroup.findText("wheel"))
@@ -386,7 +385,7 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
             err = i18n("You should enter a password for this user.")
 
         if not err:
-            pw = unicode(self.linePassword.text())
+            pw = self.linePassword.text()
 
             # After removing the length check from COMAR backend we need to remove these
             if pw != "" and len(pw) < 4:
@@ -414,11 +413,11 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
         if err:
             self.labelWarning.setText(u"<font color=red>%s</font>" % err)
             self.labelSign.show()
-            self.emit(QtCore.SIGNAL("buttonStatusChanged(int)"),0)
+            self.emit(pyqtSignal("buttonStatusChanged(int)"),0)
         else:
             self.labelWarning.setText("")
             self.labelSign.hide()
-            self.emit(QtCore.SIGNAL("buttonStatusChanged(int)"),1)
+            self.emit(pyqtSignal("buttonStatusChanged(int)"),1)
     def searchListWidget(self):
         srcList=self.filtergroups.text()
         for i in range(self.listGroups.count()):
@@ -440,45 +439,45 @@ class EditUserWidget(QtGui.QWidget, Ui_EditUserWidget):
                else:
                    self.treeAuthorizations.topLevelItem(i).setHidden(True)
 
-class EditGroupWidget(QtGui.QWidget, Ui_EditGroupWidget):
+class EditGroupWidget(QWidget, Ui_EditGroupWidget):
     def __init__(self, parent):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
 
-        self.connect(self.checkAutoId, QtCore.SIGNAL("stateChanged(int)"), self.slotCheckAuto)
-        self.connect(self.lineGroupname, QtCore.SIGNAL("textEdited(const QString&)"), self.slotGroupnameChanged)
+        self.connect(self.checkAutoId, pyqtSignal("stateChanged(int)"), self.slotCheckAuto)
+        self.connect(self.lineGroupname, pyqtSignal("textEdited(const QString&)"), self.slotGroupnameChanged)
 
     def slotGroupnameChanged(self, name):
-        self.emit(QtCore.SIGNAL("buttonStatusChanged(int)"),1)
+        self.emit(pyqtSignal("buttonStatusChanged(int)"),1)
 
     def reset(self):
         self.setId(-1)
         self.setGroupname("")
 
     def getId(self):
-        if self.checkAutoId.checkState() == QtCore.Qt.Checked:
+        if self.checkAutoId.checkState() == Qt.Checked:
             return -1
         return int(self.spinId.value())
 
     def setId(self, id):
         if id != -1:
-            self.checkAutoId.setCheckState(QtCore.Qt.Unchecked)
+            self.checkAutoId.setCheckState(Qt.Unchecked)
             self.checkAutoId.hide()
             self.spinId.setEnabled(False)
         else:
-            self.checkAutoId.setCheckState(QtCore.Qt.Checked)
+            self.checkAutoId.setCheckState(Qt.Checked)
             self.checkAutoId.show()
             self.spinId.setEnabled(False)
         self.spinId.setValue(id)
 
     def getGroupname(self):
-        return unicode(self.lineGroupname.text())
+        return self.lineGroupname.text()
 
     def setGroupname(self, groupname):
-        self.lineGroupname.setText(unicode(groupname))
+        self.lineGroupname.setText(groupname)
 
     def slotCheckAuto(self, state):
-        if state == QtCore.Qt.Checked:
+        if state == Qt.Checked:
             self.spinId.setEnabled(False)
             self.spinId.setValue(-1)
         else:

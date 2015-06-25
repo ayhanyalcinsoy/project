@@ -3,8 +3,8 @@
 #
 # Forked from Pardus User Manager
 # Copyright (C) 2012-2015, PisiLinux
-# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
-# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -17,9 +17,9 @@
 import commands
 
 # PyQt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import * #QMessageBox,QIcon
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 # UI
@@ -33,7 +33,7 @@ from usermanager.config import DEFAULT_GROUPS, ANIM_SHOW, ANIM_TARGET, ANIM_DEFA
 
 #Context
 
-from context import *
+from context import i18n
 
 # Item widget
 from usermanager.item import ItemListWidgetItem, ItemWidget
@@ -44,9 +44,9 @@ from usermanager.edit import EditUserWidget, EditGroupWidget
 # Delete Dialog
 from usermanager.question import DialogQuestion
 
-class MainWidget(QtGui.QWidget, Ui_MainWidget):
+class MainWidget(QWidget, Ui_MainWidget):
     def __init__(self, parent, embed=False):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         if embed:
             self.setupUi(parent)
@@ -56,7 +56,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         self._in_progress = False
 
         # Animation
-        self.animator = QtCore.QTimeLine(ANIM_TIME, self)
+        self.animator = QTimeLine(ANIM_TIME, self)
 
         # Initialize heights of animated widgets
         self.hideEditBox()
@@ -77,7 +77,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         self.buildItemList()
 
         # User/group edit widgets
-        layout = QtGui.QVBoxLayout(self.frameWidget)
+        layout = QVBoxLayout(self.frameWidget)
         self.widgetUserEdit = EditUserWidget(self.frameWidget)
         layout.addWidget(self.widgetUserEdit)
         self.widgetGroupEdit = EditGroupWidget(self.frameWidget)
@@ -87,25 +87,25 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         self.widgetUserEdit.listShells()
 
         # Signals
-        self.connect(self.comboFilter, QtCore.SIGNAL("currentIndexChanged(int)"), self.slotFilterChanged)
-        self.connect(self.pushNew, QtCore.SIGNAL("triggered(QAction*)"), self.slotOpenEdit)
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.slotSaveEdit)
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.widgetUserEdit.checkFields)
-        self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.slotCancelEdit)
-        self.connect(self.animator, QtCore.SIGNAL("frameChanged(int)"), self.slotAnimate)
-        self.connect(self.animator, QtCore.SIGNAL("finished()"), self.slotAnimationFinished)
-        self.connect(self.widgetUserEdit, QtCore.SIGNAL("buttonStatusChanged(int)"), self.slotButtonStatusChanged)
-        self.connect(self.widgetGroupEdit, QtCore.SIGNAL("buttonStatusChanged(int)"), self.slotButtonStatusChanged)
+        self.connect(self.comboFilter, pyqtSignal("currentIndexChanged(int)"), self.slotFilterChanged)
+        self.connect(self.pushNew, pyqtSignal("triggered(QAction*)"), self.slotOpenEdit)
+        self.connect(self.buttonBox, pyqtSignal("accepted()"), self.slotSaveEdit)
+        self.connect(self.buttonBox, pyqtSignal("accepted()"), self.widgetUserEdit.checkFields)
+        self.connect(self.buttonBox, pyqtSignal("rejected()"), self.slotCancelEdit)
+        self.connect(self.animator, pyqtSignal("frameChanged(int)"), self.slotAnimate)
+        self.connect(self.animator, pyqtSignal("finished()"), self.slotAnimationFinished)
+        self.connect(self.widgetUserEdit, pyqtSignal("buttonStatusChanged(int)"), self.slotButtonStatusChanged)
+        self.connect(self.widgetGroupEdit, pyqtSignal("buttonStatusChanged(int)"), self.slotButtonStatusChanged)
 
     def hiddenListWorkaround(self):
         """
             Workaround for hidden list items
         """
         size = self.size()
-        size += QtCore.QSize(1,1)
+        size += QSize(1,1)
         self.resize(size)
-        size -= QtCore.QSize(1,1)
-        QtCore.QTimer.singleShot(1, lambda: self.resize(size))
+        size -= QSize(1,1)
+        QTimer.singleShot(1, lambda: self.resize(size))
 
     def checkBackend(self):
         """
@@ -128,9 +128,9 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         """
         widget = ItemWidget(self.listItems, id_, title, description, type_, icon, state)
 
-        self.connect(widget, QtCore.SIGNAL("stateChanged(int)"), self.slotItemState)
-        self.connect(widget, QtCore.SIGNAL("editClicked()"), self.slotItemEdit)
-        self.connect(widget, QtCore.SIGNAL("deleteClicked()"), self.slotItemDelete)
+        self.connect(widget, pyqtSignal("stateChanged(int)"), self.slotItemState)
+        self.connect(widget, pyqtSignal("editClicked()"), self.slotItemEdit)
+        self.connect(widget, pyqtSignal("deleteClicked()"), self.slotItemDelete)
 
         return widget
 
@@ -146,7 +146,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             icon = "user-identity"
 
         # Build widget and widget item
-        widget = self.makeItemWidget(id_, name, description, type_,KIcon(icon), None)
+        widget = self.makeItemWidget(id_, name, description, type_,QIcon(icon), None)
         widgetItem = ItemListWidgetItem(self.listItems, widget)
 
         # Groups are uneditable
@@ -201,11 +201,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         """
         try:
             method()
-        except Exception, e:
+        except Exception as e:
             if "Comar.PolicyKit" in e._dbus_error_name:
                 QMessageBox.critical(self,"Error", i18n("Access denied"))
             else:
-               QMessageBox.critical(self,"Error", unicode(e))
+               QMessageBox.critical(self,"Error", e)
                return False
 
     def itemMatchesFilter(self, item):
@@ -228,27 +228,27 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             Builds item filter.
         """
         self.comboFilter.clear()
-        self.comboFilter.addItem(i18n("Users"), QtCore.QVariant("users"))
-        self.comboFilter.addItem(i18n("Groups"), QtCore.QVariant("groups"))
-        self.comboFilter.addItem(i18n("All Users"), QtCore.QVariant("all-users"))
-        self.comboFilter.addItem(i18n("All Groups"), QtCore.QVariant("all-groups"))
+        self.comboFilter.addItem(i18n("Users"), QVariant("users"))
+        self.comboFilter.addItem(i18n("Groups"), QVariant("groups"))
+        self.comboFilter.addItem(i18n("All Users"), QVariant("all-users"))
+        self.comboFilter.addItem(i18n("All Groups"), QVariant("all-groups"))
 
     def buildMenu(self):
         """
             Builds "Add New" button menu.
         """
         # Create menu for "new" button
-        menu = QtGui.QMenu(self.pushNew)
+        menu = QMenu(self.pushNew)
         self.pushNew.setMenu(menu)
 
         # New user action
-        action_user = QtGui.QAction((i18n("Add User")), self)
-        action_user.setData(QtCore.QVariant("user"))
+        action_user = QAction((i18n("Add User")), self)
+        action_user.setData(QVariant("user"))
         menu.addAction(action_user)
 
         # New group action
-        action_group = QtGui.QAction((i18n("Add Group")), self)
-        action_group.setData(QtCore.QVariant("group"))
+        action_group = QAction((i18n("Add Group")), self)
+        action_group.setData(QVariant("group"))
         menu.addAction(action_group)
 
     def showEditBox(self, id_, type_):
@@ -263,11 +263,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             if id_ != None:
                 try:
                     username, fullname, gid, homedir, shell, groups = self.iface.userInfo(id_)
-                except Exception, e: # TODO: Named exception should be raised
+                except Exception as e: # TODO: Named exception should be raised
                     if "Comar.PolicyKit" in e._dbus_error_name:
-                       QMessageBox.critical(self,"Error",i18n("Access denied"))
+                       QMessageBox.critical(self,"Error", i18n("Access denied"))
                     else:
-                        QMessageBox.critical(self,"Error",unicode(e))
+                        QMessageBox.critical(self,"Error", e)
                     return
                 self.widgetUserEdit._new = False
                 self.widgetUserEdit.setId(id_)
@@ -278,11 +278,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
                 self.widgetUserEdit.setGroups(self.all_groups, groups)
                 try:
                     self.widgetUserEdit.setAuthorizations(self.iface.getAuthorizations(id_))
-                except Exception, e: # TODO: Named exception should be raised
+                except Exception as e: # TODO: Named exception should be raised
                     if "Comar.PolicyKit" in e._dbus_error_name:
-                        QMessageBox.critical(self,"Error",i18n("Access denied"))
+                        QMessageBox.critical(self,"Error", i18n("Access denied"))
                     else:
-                        QMessageBox.critical(self,"Error",unicode(e))
+                        QMessageBox.critical(self,"Error", e)
                     return
             else:
                 authorizations = []
@@ -374,7 +374,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             gid = widget.getId()
             groupname = widget.getTitle()
             dialog=DialogQuestion(self)
-            dialog.setQuestion(i18n("Do yu want to delete group '%1'?",groupname))
+            dialog.setQuestion(i18n("Do yu want to delete group '%1'?", groupname))
             dialog.checkBox.hide()
             if dialog.exec_():
                  self.callIface(lambda: self.iface.deleteGroup(gid))
@@ -396,7 +396,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         # Get item type to add/
         type_ = str(action.data().toString())
         self.showEditBox(None, type_)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel)
 
     def slotCancelEdit(self):
         """
@@ -418,8 +418,8 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
                 grant, revoke, block = widget.getAuthorizations()
 
                 if widget.wrn:
-                    answer=QtGui.QMessageBox.warning(self,i18n("Remove items"),unicode(widget.wrn),QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
-                    if answer == QtGui.QMessageBox.No:
+                    answer=QMessageBox.warning(self,i18n("Remove items"),widget.wrn,QMessageBox.Yes,QMessageBox.No)
+                    if answer == QMessageBox.No:
                         return
 
                 if widget.isNew():
@@ -441,11 +441,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             else:
                 widget = self.widgetGroupEdit
                 self.callIface(lambda: self.iface.addGroup(widget.getId(), widget.getGroupname()))
-        except Exception, e: # TODO: Named exception should be raised
+        except Exception as e: # TODO: Named exception should be raised
             if "Comar.PolicyKit" in e:
                 QMessageBox.critical(self,"Error",i18n("Access denied"))
             else:
-                QMessageBox.critical(self,"Error",unicode(e))
+                QMessageBox.critical(self,"Error",e)
             return
         finally:
             self._in_progress = False
@@ -473,6 +473,6 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
 
     def slotButtonStatusChanged(self, status):
         if status:
-            self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+            self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         else:
-            self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel)
+            self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel)

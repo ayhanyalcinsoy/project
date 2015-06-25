@@ -3,8 +3,8 @@
 #
 # Forked from Pardus User Manager
 # Copyright (C) 2012-2015, PisiLinux
-# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
-# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -15,8 +15,9 @@
 #
 
 # PyQt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # UI
 from usermanager.ui_question import Ui_DialogQuestion
@@ -25,12 +26,12 @@ from usermanager.ui_question import Ui_DialogQuestion
 
 from context import *
 
-class DialogQuestion(QtGui.QDialog, Ui_DialogQuestion):
+class DialogQuestion(QDialog, Ui_DialogQuestion):
     def __init__(self, parent):
-        QtGui.QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.pixmapIcon.setPixmap(KIcon("dialog-information").pixmap(48, 48))
+        self.pixmapIcon.setPixmap(QIcon("dialog-information").pixmap(48, 48))
 
     def setQuestion(self, question):
         self.labelQuestion.setText(question)
@@ -39,4 +40,4 @@ class DialogQuestion(QtGui.QDialog, Ui_DialogQuestion):
         self.checkBox.setText(message)
 
     def getCheckBox(self):
-        return self.checkBox.checkState() == QtCore.Qt.Checked
+        return self.checkBox.checkState() == Qt.Checked

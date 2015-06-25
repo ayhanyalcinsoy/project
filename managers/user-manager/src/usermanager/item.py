@@ -3,8 +3,8 @@
 #
 # Forked from Pardus User Manager
 # Copyright (C) 2012-2015, PisiLinux
-# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
-# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -15,26 +15,23 @@
 #
 
 # PyQt
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 import context as ctx
-if ctx.Pds.session==ctx.pds.Kde4:
-    # PyKDE
-    from PyKDE4.kdeui import KIcon
-else:
-    #PDS
-    from context import *
+#PDS
+from context import *
 
 # UI
 from usermanager.ui_item import Ui_ItemWidget
 
 
-class ItemListWidgetItem(QtGui.QListWidgetItem):
+class ItemListWidgetItem(QListWidgetItem):
     def __init__(self, parent, widget):
-        QtGui.QListWidgetItem.__init__(self, parent)
+        QListWidgetItem.__init__(self, parent)
         self.widget = widget
-        self.setSizeHint(QtCore.QSize(300, 48))
+        self.setSizeHint(QSize(300, 48))
 
     def getId(self):
         return self.widget.getId()
@@ -43,9 +40,9 @@ class ItemListWidgetItem(QtGui.QListWidgetItem):
         return self.widget.getType()
 
 
-class ItemWidget(QtGui.QWidget, Ui_ItemWidget):
+class ItemWidget(QWidget, Ui_ItemWidget):
     def __init__(self, parent, id_, title="", description="", type_=None, icon=None, state=None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
 
         self.id = id_
@@ -64,13 +61,13 @@ class ItemWidget(QtGui.QWidget, Ui_ItemWidget):
             self.checkState.hide()
 
         # Buttons
-        self.pushEdit.setIcon(KIcon("preferences-other"))
-        self.pushDelete.setIcon(KIcon("edit-delete"))
+        self.pushEdit.setIcon(QIcon("preferences-other"))
+        self.pushDelete.setIcon(QIcon("edit-delete"))
 
         # Signals
-        self.connect(self.checkState, QtCore.SIGNAL("stateChanged(int)"), lambda: self.emit(QtCore.SIGNAL("stateChanged(int)"), self.checkState.checkState()))
-        self.connect(self.pushEdit, QtCore.SIGNAL("clicked()"), lambda: self.emit(QtCore.SIGNAL("editClicked()")))
-        self.connect(self.pushDelete, QtCore.SIGNAL("clicked()"), lambda: self.emit(QtCore.SIGNAL("deleteClicked()")))
+        self.connect(self.checkState, pyqtSignal("stateChanged(int)"), lambda: self.emit(pyqtSignal("stateChanged(int)"), self.checkState.checkState()))
+        self.connect(self.pushEdit, pyqtSignal("clicked()"), lambda: self.emit(pyqtSignal("editClicked()")))
+        self.connect(self.pushDelete, pyqtSignal("clicked()"), lambda: self.emit(pyqtSignal("deleteClicked()")))
 
     def mouseDoubleClickEvent(self, event):
         self.pushEdit.animateClick(100)
@@ -82,16 +79,16 @@ class ItemWidget(QtGui.QWidget, Ui_ItemWidget):
         return self.type
 
     def setTitle(self, title):
-        self.labelTitle.setText(unicode(title))
+        self.labelTitle.setText(title)
 
     def getTitle(self):
-        return unicode(self.labelTitle.text())
+        return self.labelTitle.text()
 
     def setDescription(self, description):
-        self.labelDescription.setText(unicode(description))
+        self.labelDescription.setText(description)
 
     def getDescription(self):
-        return unicode(self.labelDescription.text())
+        return self.labelDescription.text()
 
     def setIcon(self, icon):
         self.labelIcon.setPixmap(icon.pixmap(32, 32))
@@ -101,9 +98,9 @@ class ItemWidget(QtGui.QWidget, Ui_ItemWidget):
 
     def setState(self, state):
         if state == True:
-            state = QtCore.Qt.Checked
+            state = Qt.Checked
         elif state == False:
-            state = QtCore.Qt.Unchecked
+            state = Qt.Unchecked
         return self.checkState.setCheckState(state)
 
     def hideEdit(self):
