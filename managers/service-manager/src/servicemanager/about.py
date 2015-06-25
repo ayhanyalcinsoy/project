@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Forked from Pardus Service Manager
+# Forked from Pardus Package Manager
 # Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Bahadır Kandemir
 # 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
 # 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
@@ -25,24 +27,5 @@ version     = "3.0.0"
 homePage    = "http://developer.pardus.org.tr/projects/service-manager"
 bugEmail    = "bugs@pardus.org.tr"
 icon        = "flag-yellow"
+authors ="Ayhan Yalçınsoy", "Muhammet Dilmaç"
 catalog     = appName
-
-if ctx.Pds.session == ctx.pds.Kde4:
-
-    # PyKDE4 Stuff
-    from PyKDE4.kdecore import KAboutData, ki18n, ki18nc
-
-    programName = ki18n(PACKAGE)
-    description = ki18n(PACKAGE)
-    license     = KAboutData.License_GPL
-    copyright   = ki18n("(c) 2009-2010 TUBITAK/UEKAE")
-    text        = ki18n(None)
-    aboutData   = KAboutData(appName, catalog, programName, version, description, license, copyright, text, homePage, bugEmail)
-
-    # Authors
-    aboutData.addAuthor(ki18n("Gökmen Göksel"), ki18n("Current Maintainer"))
-    aboutData.addAuthor(ki18n("Bahadır Kandemir"), ki18n("COMAR Author"))
-    aboutData.setTranslator(ki18nc("NAME OF TRANSLATORS", "Your names"), ki18nc("EMAIL OF TRANSLATORS", "Your emails"))
-
-    # Use this if icon name is different than appName
-    aboutData.setProgramIconName(icon)

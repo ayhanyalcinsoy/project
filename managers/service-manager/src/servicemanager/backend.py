@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Forked from Pardus Service Manager
+# Forked from Pardus Package Manager
 # Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Bahadır Kandemir
 # 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
 # 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
