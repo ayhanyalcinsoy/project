@@ -1,6 +1,6 @@
 #ifndef SETTINGSITEM.PY
 #define SETTINGSITEM.PY
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Forked from Pardus Firewall Manager
