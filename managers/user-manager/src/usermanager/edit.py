@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Forked from Pardus User Manager
@@ -118,7 +118,7 @@ class EditUserWidget(QWidget, Ui_EditUserWidget):
         self.comboShell.clear()
         self.comboShell.addItems(self.available_shells)
         self.emit(pyqtSignal("buttonStatusChanged(int)"),1)
-        for index in xrange(self.treeAuthorizations.topLevelItemCount()):
+        for index in range(self.treeAuthorizations.topLevelItemCount()):
             self.treeAuthorizations.collapseItem(self.treeAuthorizations.topLevelItem(index))
 
     def buildPolicies(self):
@@ -149,9 +149,9 @@ class EditUserWidget(QWidget, Ui_EditUserWidget):
         grant = []
         revoke = []
         block = []
-        for index in xrange(self.treeAuthorizations.topLevelItemCount()):
+        for index in range(self.treeAuthorizations.topLevelItemCount()):
             tl_item = self.treeAuthorizations.topLevelItem(index)
-            for child_index in xrange(tl_item.childCount()):
+            for child_index in range(tl_item.childCount()):
                 item = tl_item.child(child_index)
                 if item.getType() == -1:
                     block.append(item.getAction())
@@ -284,9 +284,9 @@ class EditUserWidget(QWidget, Ui_EditUserWidget):
             type_ = 0
         elif self.radioAuthYes.isChecked():
             type_ = 1
-        for index in xrange(self.treeAuthorizations.topLevelItemCount()):
+        for index in range(self.treeAuthorizations.topLevelItemCount()):
             tl_item = self.treeAuthorizations.topLevelItem(index)
-            for child_index in xrange(tl_item.childCount()):
+            for child_index in range(tl_item.childCount()):
                 item = tl_item.child(child_index)
                 item.setType(type_)
 
