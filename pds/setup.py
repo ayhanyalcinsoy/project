@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Forked from Pardus Desktop Services
+# Copyright (C) 2012-2015, PisiLinux
+# Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+#
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 2 of the License, or (at your option)
@@ -20,35 +25,42 @@ from distutils.sysconfig import get_python_lib
 
 PROJECT = 'pds'
 
+
 def plp():
     return os.path.join(get_python_lib(), PROJECT)
 
+
 class Clean(clean):
     def run(self):
-        print 'Cleaning ...'
+        print('Cleaning ...')
         os.system('find -name *.pyc|xargs rm -rf')
         for dirs in ('build', 'dist'):
             if os.path.exists(dirs):
-                print ' removing: ', dirs
+                print(' removing: '), dirs
                 shutil.rmtree(dirs)
         clean.run(self)
+
 
 class Dist(sdist):
     def run(self):
         os.system('python setup.py build')
         sdist.run(self)
 
+
 class Uninstall(Command):
     user_options = []
+
     def initialize_options(self):
         pass
+
     def finalize_options(self):
         pass
+
     def run(self):
-        print 'Uninstalling ...'
+        print('Uninstalling ...')
         project_dir = plp()
         if os.path.exists(project_dir):
-            print ' removing: ', project_dir
+            print(' removing: '), project_dir
             shutil.rmtree(project_dir)
 
 setup(name=PROJECT,

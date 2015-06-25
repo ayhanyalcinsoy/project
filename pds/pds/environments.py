@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 # Pisi Desktop Services
-
 # Forked from Pardus Desktop Services
 # Copyright (C) 2015, PisiLinux
-# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
+# 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free

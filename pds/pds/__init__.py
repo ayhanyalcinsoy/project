@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus
+# PisiLinux Desktop Services
+# Copyright (C) 2015, PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
-# 2010 - H. İbrahim Güngör <ibrahim:pardus.org.tr>
 # 2011 - Comak Developers <comak:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,7 +22,7 @@ from os import environ
 import piksemel
 import gettext
 
-# PyQt4 Core Libraries
+# PyQt Core Libraries
 from PyQt5.QtCore import QSettings
 
 # Logging
@@ -32,7 +33,7 @@ from pds.environments import *
 
 class Pds:
 
-    SupportedDesktops = (DefaultDe, Kde4, Kde3, Xfce, Enlightenment, LXDE,
+    SupportedDesktops = (DefaultDe, Kde4, Kde3, Xfce, Enlightenment, LxQt,
                         Fluxbox, Gnome, Gnome3, Mate)
 
     def __init__(self, catalogName='', debug=False):
@@ -54,9 +55,9 @@ class Pds:
             def __i18n(*text):
                 if len(text) == 1:
                     return self.__trans.ugettext(text[0])
-                ttt = unicode(self.__trans.ugettext(text[0]))
+                ttt = self.__trans.ugettext(text[0])
                 for i in range(1,len(text)):
-                    ttt = ttt.replace('%%%d' % i, unicode(text[i]))
+                    ttt = ttt.replace('%%%d' % i, text[i])
                 return ttt
 
             self.i18n = __i18n
@@ -75,7 +76,7 @@ class Pds:
             return getattr(self.session, str(name))
 
         if not self.__dict__.has_key(name):
-            raise AttributeError, name
+            raise AttributeError(name)
 
     def updatei18n(self, lang):
         if self.catalogName:
@@ -88,7 +89,7 @@ class Pds:
             if not self.notifierInitialized:
                 pynotify.init(self.catalogName)
                 self.notifierInitialized = True
-            notifier = pynotify.Notification(unicode(title), unicode(message),\
+            notifier = pynotify.Notification(title, message,\
                     icon or self.catalogName)
             notifier.show()
         except:
@@ -109,13 +110,13 @@ class Pds:
                 if _value:
                     value = _value.join(',')
             else:
-                value = unicode(_value.toString())
+                value = _value.toString()
             if not value or value == '':
                 logging.debug('Switching to default conf')
                 alternateConfig = self.session.DefaultConfigPath or \
                         path.join(self.install_prefix, self.session.ConfigFile)
                 settings = self.parse(alternateConfig, force = True)
-                value = unicode(settings.value(key, default).toString())
+                value = settings.value(key, default).toString()
 
         elif self.session.ConfigType == 'xml':
             settings = self.parse(self.config_file, 'xml').getTag('property')

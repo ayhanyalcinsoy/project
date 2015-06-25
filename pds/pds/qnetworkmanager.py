@@ -1,9 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# Copyright (C) 2011, TUBITAK/UEKAE
-# 2011 - Gökmen Göksel <gokmen:pardus.org.tr>
+# Forked from Pardus
+# PisiLinux Desktop Services
+# Copyright (C) 2015, PisiLinux
+# 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2011 - Comak Developers <comak:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
+
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free

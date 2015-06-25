@@ -1,9 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus
+# PisiLinux Desktop Services
+# Copyright (C) 2015, PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2011 - Comak Developers <comak:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # The QProgressIndicator class lets an application display a progress
 # indicator to show that a lengthy task is under way.

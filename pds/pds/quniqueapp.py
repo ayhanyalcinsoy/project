@@ -5,6 +5,7 @@
 # PisiLinux Desktop Services
 # Copyright (C) 2015, PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2011 - Comak Developers <comak:pardus.org.tr>
 # 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
