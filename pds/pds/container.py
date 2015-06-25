@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Pisi Desktop Services
@@ -43,7 +43,7 @@ class PApplicaitonContainer(QWidget):
         self._args = args
 
         self._proc = QProcess(self)
-        self._proc.finished.connect(self._finished)
+        self._proc.finished. connect(self._finished)
         self._proc.start(process, args)
 
         self.clientClosed.connect(self._proc.close)
