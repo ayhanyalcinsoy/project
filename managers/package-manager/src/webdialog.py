@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,6 +18,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtWebKitWidgets import *
+from PyQt5.QtNetwork import *
 
 import config
 
@@ -43,14 +50,14 @@ class WebDialog(PAbstractBox, Ui_WebDialog):
         self.registerFunction(FINISHED, lambda: parent.statusBar().setVisible(not self.isVisible()))
         self._as = 'http://appinfo.pisilinux.org'
         self.cancelButton.clicked.connect(self._hide)
-        self.cancelButton.setIcon(KIcon("cancel"))
+        self.cancelButton.setIcon(QIcon("cancel"))
 
         # Hide Scrollbars and context menu in webview
         self.webView.setContextMenuPolicy(Qt.NoContextMenu)
         self.webView.page().mainFrame().setScrollBarPolicy(Qt.Vertical, Qt.ScrollBarAlwaysOff)
         self.webView.page().mainFrame().setScrollBarPolicy(Qt.Horizontal, Qt.ScrollBarAlwaysOff)
 
-        self.webView.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.webView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.webView.page().linkClicked.connect(self.showFullImage)
 
         self.tabWidget.removeTab(0)
@@ -157,7 +164,7 @@ class PreviewDialog(PAbstractBox, Ui_Preview):
         # self._disable_parent_in_shown = True
 
         self.cancelButton.clicked.connect(self._hide)
-        self.cancelButton.setIcon(KIcon("cancel"))
+        self.cancelButton.setIcon(QIcon("cancel"))
 
         # Hide Scrollbars and context menu in webview
         self.webView.setContextMenuPolicy(Qt.NoContextMenu)

@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,24 +18,21 @@
 
 import backend
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import QVariant
-
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QListWidget
-from PyQt5.QtGui import QListWidgetItem
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 from pmutils import *
+from pds import QIconLoader
 from statemanager import StateManager
+
 
 class GroupList(QListWidget):
     def __init__(self, parent=None):
         QListWidget.__init__(self, parent)
         self.iface = backend.pm.Iface()
-        self.defaultIcon = KIcon(('applications-other', 'unknown'), KIconLoader.SizeSmallMedium)
-        self.connect(self, SIGNAL("itemClicked(QListWidgetItem*)"),
+        self.defaultIcon = QIcon(('applications-other', 'unknown'), QIconLoader.SizeSmallMedium)
+        self.connect(self, pyqtSignal("itemClicked(QListWidgetItem*)"),
                             self.groupChanged)
         self._list = {}
 
@@ -51,7 +53,7 @@ class GroupList(QListWidget):
     def createGroupItem(self, name, content = None):
         if not content:
             group = self.iface.getGroup(name)
-            localName, icon_path = unicode(group.localName), group.icon
+            localName, icon_path = group.localName, group.icon
             package_count = len(self.state.groupPackages(name))
             if package_count <= 0:
                 return
@@ -59,14 +61,14 @@ class GroupList(QListWidget):
             localName, icon_path = content[0], content[1]
             package_count = content[2]
 
-        icon = KIcon(icon_path, KIconLoader.SizeSmallMedium)
+        icon = QIcon(icon_path, QIconLoader.SizeSmallMedium)
         if icon.isNull():
             icon = self.defaultIcon
         text = "%s (%d)" % (localName, package_count)
         item = QListWidgetItem(icon, text, self)
         item.setToolTip(localName)
-        item.setData(Qt.UserRole, QVariant(unicode(name)))
-        item.setSizeHint(QSize(0, KIconLoader.SizeMedium))
+        item.setData(Qt.UserRole, QVariant(name))
+        item.setSizeHint(QSize(0, QIconLoader.SizeMedium))
         self._list[name] = item
 
     def moveAllToFirstLine(self):
@@ -83,8 +85,7 @@ class GroupList(QListWidget):
         if not self.count():
             return
         if self.currentItem():
-            return unicode(self.currentItem().data(Qt.UserRole).toString())
+            return self.currentItem().data(Qt.UserRole).toString()
 
     def groupChanged(self):
-        self.emit(SIGNAL("groupChanged()"))
-
+        self.emit(pyqtSignal("groupChanged()"))

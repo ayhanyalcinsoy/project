@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,14 +18,15 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from pmutils import *
 
-class PackageView(QtGui.QTableView):
+class PackageView(QTableView):
     def __init__(self, parent=None):
-        QtGui.QTableView.__init__(self, parent)
+        QTableView.__init__(self, parent)
 
-        self.select_all = QtGui.QCheckBox(i18n('Select all packages in this group'), self)
+        self.select_all = QCheckBox(i18n('Select all packages in this group'), self)
         self.select_all.resize(parent.width(), 32)
         self.select_all.move(3,3)
         self.select_all.setStyleSheet('padding:8px;padding-left:4px;')
@@ -38,7 +44,7 @@ class PackageView(QtGui.QTableView):
 
     def resizeEvent(self, event):
         if event.isAccepted():
-            QtGui.QTableView.resizeEvent(self, event)
+            QTableView.resizeEvent(self, event)
             if self.needs_select_all:
                 self.setViewportMargins(0, 32, 0, 0)
                 self.select_all.resize(self.viewport().width(), 32)
@@ -84,5 +90,5 @@ class PackageView(QtGui.QTableView):
         return self.model().sourceModel().search(text)
 
     def requestUpdate(self):
-        self.emit(SIGNAL("updateRequested()"))
+        self.emit(pyqtSignal("updateRequested()"))
 

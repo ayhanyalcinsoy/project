@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -14,28 +19,11 @@
 # Package Manager Version String
 version = "2.4.1"
 PACKAGE = "Package Manager"
-
-# PyKDE4 Imports
-# from PyKDE4.kdecore import ki18n, ki18nc, KAboutData
-
-# Application Data
-appName     = "package-manager"
-catalog     = appName
-# programName = ki18n(PACKAGE)
-# description = ki18n(PACKAGE)
-# license     = KAboutData.License_GPL
-# copyright   = ki18n("(c) 2009-2010 TUBITAK/UEKAE")
-# text        = ki18n(None)
-homePage    = "https://github.com/pisilinux/project/tree/master/package-manager-pds"
-bugEmail    = "bugs@pisilinux.org"
-# aboutData   = KAboutData(appName, catalog, programName, version,
-#                          description, license, copyright, text,
-#                          homePage, bugEmail)
-
-# Authors
-# aboutData.addAuthor(ki18n("Gökmen Göksel"), ki18n("Developer"))
-# aboutData.addAuthor(ki18n("Faik Uygur"), ki18n("First Author"))
-# aboutData.setTranslator(ki18nc("NAME OF TRANSLATORS", "Your names"),
-#                         ki18nc("EMAIL OF TRANSLATORS", "Your emails"))
-# aboutData.setProgramIconName(":/data/package-manager.png")
+appName = "package-manager"
+catalog = appName
+license = "GPL"
+authors = "Ayhan Yalçınsoy", "Muhammet Dilmaç"
+homePage = "http://www.pisilinux.org"
+bugEmail = "admin@pisilinux.org"
+icon = "package-manager.png"
 

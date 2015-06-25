@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,6 +26,7 @@ from config import PMConfig
 
 from pds.gui import FINISHED, OUT
 from pds.thread import PThread
+from pds import QIconLoader
 
 from pmutils import *
 
@@ -58,7 +64,7 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
         self.statusUpdater = StatusUpdater()
         self.basket = BasketDialog(self.state, self.parent)
         self._postexceptions.append(lambda: self.basket.setActionEnabled(True))
-        self.searchButton.setIcon(KIcon(("edit-find", "find")))
+        self.searchButton.setIcon(QIcon(("edit-find", "find")))
         self.initializeUpdateTypeList()
 
         model = PackageModel(self)
@@ -68,8 +74,8 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
         self.packageList.setItemDelegate(PackageDelegate(self, self.parent))
         self.packageList.setColumnWidth(0, 32)
 
-        self.connect(self.packageList.model(), SIGNAL("dataChanged(QModelIndex,QModelIndex)"), self.statusChanged)
-        self.connect(self.packageList, SIGNAL("updateRequested()"), self.initialize)
+        self.connect(self.packageList.model(), pyqtSignal("dataChanged(QModelIndex,QModelIndex)"), self.statusChanged)
+        self.connect(self.packageList, pyqtSignal("updateRequested()"), self.initialize)
 
         self.updateSettings()
         self.setActionButton()
@@ -86,20 +92,20 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
         self.pdsMessageBox = PMessageBox(self.content)
 
     def connectMainSignals(self):
-        self.connect(self.actionButton, SIGNAL("clicked()"), self.showBasket)
-        self.connect(self.checkUpdatesButton, SIGNAL("clicked()"), self.state.updateRepoAction)
-        self.connect(self.searchButton, SIGNAL("clicked()"), self.searchActivated)
-        self.connect(self.searchLine, SIGNAL("textEdited(const QString&)"), self.searchLineChanged)
-        self.connect(self.searchLine, SIGNAL("returnPressed()"), self.searchActivated)
-        self.connect(self.searchLine, SIGNAL("clearButtonClicked()"), self.groupFilter)
-        self.connect(self.typeCombo, SIGNAL("activated(int)"), self.typeFilter)
-        self.connect(self.stateTab, SIGNAL("currentChanged(int)"), self.switchState)
-        self.connect(self.groupList, SIGNAL("groupChanged()"), self.groupFilter)
-        self.connect(self.groupList, SIGNAL("groupChanged()"), lambda:self.searchButton.setEnabled(False))
-        self.connect(self.packageList.select_all, SIGNAL("clicked(bool)"), self.toggleSelectAll)
-        self.connect(self.statusUpdater, SIGNAL("selectedInfoChanged(int, QString, int, QString)"), self.emitStatusBarInfo)
-        self.connect(self.statusUpdater, SIGNAL("selectedInfoChanged(QString)"), lambda message: self.emit(SIGNAL("selectionStatusChanged(QString)"), message))
-        self.connect(self.statusUpdater, SIGNAL("finished()"), self.statusUpdated)
+        self.connect(self.actionButton, pyqtSignal("clicked()"), self.showBasket)
+        self.connect(self.checkUpdatesButton, pyqtSignal("clicked()"), self.state.updateRepoAction)
+        self.connect(self.searchButton, pyqtSignal("clicked()"), self.searchActivated)
+        self.connect(self.searchLine, pyqtSignal("textEdited(const QString&)"), self.searchLineChanged)
+        self.connect(self.searchLine, pyqtSignal("returnPressed()"), self.searchActivated)
+        self.connect(self.searchLine, pyqtSignal("clearButtonClicked()"), self.groupFilter)
+        self.connect(self.typeCombo, pyqtSignal("activated(int)"), self.typeFilter)
+        self.connect(self.stateTab, pyqtSignal("currentChanged(int)"), self.switchState)
+        self.connect(self.groupList, pyqtSignal("groupChanged()"), self.groupFilter)
+        self.connect(self.groupList, pyqtSignal("groupChanged()"), lambda:self.searchButton.setEnabled(False))
+        self.connect(self.packageList.select_all, pyqtSignal("clicked(bool)"), self.toggleSelectAll)
+        self.connect(self.statusUpdater, pyqtSignal("selectedInfoChanged(int, QString, int, QString)"), self.emitStatusBarInfo)
+        self.connect(self.statusUpdater, pyqtSignal("selectedInfoChanged(QString)"), lambda message: self.emit(SIGNAL("selectionStatusChanged(QString)"), message))
+        self.connect(self.statusUpdater, pyqtSignal("finished()"), self.statusUpdated)
 
     def initialize(self):
         waitCursor()
@@ -177,7 +183,7 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
         if self.statusUpdater.isRunning():
             self.statusUpdater.needsUpdate = True
         else:
-            self.emit(SIGNAL("updatingStatus()"))
+            self.emit(pyqtSignal("updatingStatus()"))
             self.statusUpdater.start()
 
     def initializeGroupList(self):
@@ -196,7 +202,7 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
 
     def packageFilter(self, text):
         self.packageList.model().setFilterRole(Qt.DisplayRole)
-        self.packageList.model().setFilterRegExp(QRegExp(unicode(text), Qt.CaseInsensitive, QRegExp.FixedString))
+        self.packageList.model().setFilterRegExp(QRegExp(text, Qt.CaseInsensitive, QRegExp.FixedString))
 
     def typeFilter(self, index):
         if self.state.state == self.state.UPGRADE:
@@ -287,13 +293,13 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
             self.notifyFinished()
 
         if operation == "System.Manager.installPackage" and self._started:
-            KIconLoader.updateAvailableIcons()
+            QIconLoader.updateAvailableIcons()
             self.summaryDialog.setDesktopFiles(self.operation.desktopFiles)
             self.summaryDialog.showSummary()
 
         if operation in ("System.Manager.updateRepository",
                          "System.Manager.updateAllRepositories"):
-            self.emit(SIGNAL("repositoriesUpdated()"))
+            self.emit(pyqtSignal("repositoriesUpdated()"))
         self.searchLine.clear()
         self.state.reset()
         self.progressDialog._hide()
@@ -328,7 +334,7 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
             self.initialize()
 
     def emitStatusBarInfo(self, packages, packagesSize, extraPackages, extraPackagesSize):
-        self.emit(SIGNAL("selectionStatusChanged(QString)"), self.state.statusText(packages, packagesSize, extraPackages, extraPackagesSize))
+        self.emit(pyqtSignal("selectionStatusChanged(QString)"), self.state.statusText(packages, packagesSize, extraPackages, extraPackagesSize))
 
     def setSelectAll(self, packages=None):
         if packages:
@@ -388,5 +394,5 @@ class MainWidget(QWidget, PM, Ui_MainWidget):
                         ['critical', i18n('Critical Updates'), ('security-low', 'ledred')]]
 
         for type in UPDATE_TYPES:
-            self.typeCombo.addItem(KIcon(type[2]), type[1], QVariant(type[0]))
+            self.typeCombo.addItem(QIcon(type[2]), type[1], QVariant(type[0]))
 

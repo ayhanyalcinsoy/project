@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -52,8 +57,8 @@ class RowAnimator(object):
 
     def initTimeLine(self):
         self.timeLine = QTimeLine(300)
-        QObject.connect(self.timeLine, SIGNAL("frameChanged(int)"), self.updateSize)
-        QObject.connect(self.timeLine, SIGNAL("finished()"), self.finished)
+        QObject.connect(self.timeLine, pyqtSignal("frameChanged(int)"), self.updateSize)
+        QObject.connect(self.timeLine, pyqtSignal("finished()"), self.finished)
         self.timeLine.setDirection(QTimeLine.Backward)
 
     def animate(self, row, reverseOld = False):
@@ -63,7 +68,7 @@ class RowAnimator(object):
             if not self.row == row:
                 self.timeLine.setFrameRange(DEFAULT_HEIGHT, self.max_height)
                 self.timeLine.start()
-                QObject.connect(self.timeLine, SIGNAL("finished()"), lambda: self.animate(row, True))
+                QObject.connect(self.timeLine, pyqtSignal("finished()"), lambda: self.animate(row, True))
                 if not reverseOld:
                     return
 

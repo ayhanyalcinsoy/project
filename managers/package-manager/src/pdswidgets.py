@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,6 +18,8 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+
 from pds.gui import *
 from pds.qprogressindicator import QProgressIndicator
 from ui_message import Ui_MessageBox
@@ -32,7 +39,7 @@ class PMessageBox(PAbstractBox):
         self.ui.setupUi(self)
 
         self.busy = QProgressIndicator(self, "white")
-        self.busy.setMinimumSize(QtCore.QSize(32, 32))
+        self.busy.setMinimumSize(QSize(32, 32))
         self.busy.hide()
         self.ui.mainLayout.insertWidget(1, self.busy)
 
@@ -53,15 +60,15 @@ class PMessageBox(PAbstractBox):
         else:
             if icon:
                 if type(icon) == str:
-                    icon = KIcon(icon).pixmap(32,32)
-                self.ui.icon.setPixmap(QtGui.QPixmap(icon))
+                    icon = QIcon(icon).pixmap(32,32)
+                self.ui.icon.setPixmap(QPixmap(icon))
                 self.ui.icon.show()
             else:
                 self.ui.icon.hide()
             self.busy.hide()
 
         self.last_msg = self.animate(start = PMessageBox.IN_POS, stop = PMessageBox.STOP_POS)
-        QtGui.qApp.processEvents()
+        qApp.processEvents()
 
     def hideMessage(self, force = False):
         if self.isVisible() or force:

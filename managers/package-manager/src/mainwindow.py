@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -61,20 +66,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connectMainSignals(self):
         self.cw.connectMainSignals()
         self.connect(QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Tab),self),
-                SIGNAL("activated()"), lambda: self.moveTab('next'))
+                pyqtSignal("activated()"), lambda: self.moveTab('next'))
         self.connect(QShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_Tab),self),
-                SIGNAL("activated()"), lambda: self.moveTab('prev'))
+                pyqtSignal("activated()"), lambda: self.moveTab('prev'))
         self.connect(QShortcut(QKeySequence(Qt.CTRL + Qt.Key_F),self),
-                SIGNAL("activated()"), self.cw.searchLine.setFocus)
+                pyqtSignal("activated()"), self.cw.searchLine.setFocus)
         self.connect(QShortcut(QKeySequence(Qt.Key_F3),self),
-                SIGNAL("activated()"), self.cw.searchLine.setFocus)
+                pyqtSignal("activated()"), self.cw.searchLine.setFocus)
 
-        self.connect(self.settingsDialog, SIGNAL("packagesChanged()"), self.cw.initialize)
-        self.connect(self.settingsDialog, SIGNAL("packageViewChanged()"), self.cw.updateSettings)
-        self.connect(self.settingsDialog, SIGNAL("traySettingChanged()"), self.tray.settingsChanged)
-        self.connect(self.cw.state, SIGNAL("repositoriesChanged()"), self.tray.populateRepositoryMenu)
-        self.connect(self.cw, SIGNAL("repositoriesUpdated()"), self.tray.updateTrayUnread)
-        self.connect(qApp, SIGNAL("shutDown()"), self.slotQuit)
+        self.connect(self.settingsDialog, pyqtSignal("packagesChanged()"), self.cw.initialize)
+        self.connect(self.settingsDialog, pyqtSignal("packageViewChanged()"), self.cw.updateSettings)
+        self.connect(self.settingsDialog, pyqtSignal("traySettingChanged()"), self.tray.settingsChanged)
+        self.connect(self.cw.state, pyqtSignal("repositoriesChanged()"), self.tray.populateRepositoryMenu)
+        self.connect(self.cw, pyqtSignal("repositoriesUpdated()"), self.tray.updateTrayUnread)
+        self.connect(qApp, pyqtSignal("shutDown()"), self.slotQuit)
 
     def moveTab(self, direction):
         new_index = self.cw.stateTab.currentIndex() - 1
@@ -86,18 +91,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def initializeTray(self):
         self.tray = Tray(self, self.iface)
-        self.connect(self.cw.operation, SIGNAL("finished(QString)"), self.trayAction)
-        self.connect(self.cw.operation, SIGNAL("finished(QString)"), self.tray.stop)
-        self.connect(self.cw.operation, SIGNAL("operationCancelled()"), self.tray.stop)
-        self.connect(self.cw.operation, SIGNAL("started(QString)"), self.tray.animate)
-        self.connect(self.tray, SIGNAL("showUpdatesSelected()"), self.trayShowUpdates)
+        self.connect(self.cw.operation, pyqtSignal("finished(QString)"), self.trayAction)
+        self.connect(self.cw.operation, pyqtSignal("finished(QString)"), self.tray.stop)
+        self.connect(self.cw.operation, pyqtSignal("operationCancelled()"), self.tray.stop)
+        self.connect(self.cw.operation, pyqtSignal("started(QString)"), self.tray.animate)
+        self.connect(self.tray, pyqtSignal("showUpdatesSelected()"), self.trayShowUpdates)
 
     def trayShowUpdates(self):
         self.showUpgradeAction.setChecked(True)
 
         self.cw.switchState(StateManager.UPGRADE)
 
-        KApplication.kApplication().updateUserTimestamp()
+        QGuiApplication.applicationName(self).updateUserTimestamp()
 
         self.show()
         self.raise_()
@@ -117,43 +122,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.updateStatusBar('')
 
-        self.connect(self.cw, SIGNAL("selectionStatusChanged(QString)"), self.updateStatusBar)
-        self.connect(self.cw, SIGNAL("updatingStatus()"), self.statusWaiting)
+        self.connect(self.cw, pyqtSignal("selectionStatusChanged(QString)"), self.updateStatusBar)
+        self.connect(self.cw, pyqtSignal("updatingStatus()"), self.statusWaiting)
 
     def initializeActions(self):
         self.initializeOperationActions()
 
     def initializeOperationActions(self):
 
-        self.showAllAction = QAction(KIcon(("applications-other", "package_applications")), i18n("All Packages"), self)
-        self.connect(self.showAllAction, SIGNAL("triggered()"), lambda:self.cw.switchState(StateManager.ALL))
-        self.cw.stateTab.addTab(QWidget(), KIcon(("applications-other", "package_applications")), i18n("All Packages"))
+        self.showAllAction = QAction(QIcon(("applications-other", "package_applications")), i18n("All Packages"), self)
+        self.connect(self.showAllAction, pyqtSignal("triggered()"), lambda:self.cw.switchState(StateManager.ALL))
+        self.cw.stateTab.addTab(QWidget(), QIcon(("applications-other", "package_applications")), i18n("All Packages"))
 
-        self.showInstallAction = QAction(KIcon(("list-add", "add")), i18n("Installable Packages"), self)
-        self.connect(self.showInstallAction, SIGNAL("triggered()"), lambda:self.cw.switchState(StateManager.INSTALL))
-        self.cw.stateTab.addTab(QWidget(), KIcon(("list-add", "add")), i18n("Installable Packages"))
+        self.showInstallAction = QAction(QIcon(("list-add", "add")), i18n("Installable Packages"), self)
+        self.connect(self.showInstallAction, pyqtSignal("triggered()"), lambda:self.cw.switchState(StateManager.INSTALL))
+        self.cw.stateTab.addTab(QWidget(), QIcon(("list-add", "add")), i18n("Installable Packages"))
 
-        self.showRemoveAction = QAction(KIcon(("list-remove", "remove")), i18n("Installed Packages"), self)
-        self.connect(self.showRemoveAction, SIGNAL("triggered()"), lambda:self.cw.switchState(StateManager.REMOVE))
-        self.cw.stateTab.addTab(QWidget(), KIcon(("list-remove", "remove")), i18n("Installed Packages"))
+        self.showRemoveAction = QAction(QIcon(("list-remove", "remove")), i18n("Installed Packages"), self)
+        self.connect(self.showRemoveAction, pyqtSignal("triggered()"), lambda:self.cw.switchState(StateManager.REMOVE))
+        self.cw.stateTab.addTab(QWidget(), QIcon(("list-remove", "remove")), i18n("Installed Packages"))
 
-        self.showUpgradeAction = QAction(KIcon(("system-software-update", "gear")), i18n("Updates"), self)
-        self.connect(self.showUpgradeAction, SIGNAL("triggered()"), lambda:self.cw.switchState(StateManager.UPGRADE))
-        self.cw.stateTab.addTab(QWidget(), KIcon(("system-software-update", "gear")), i18n("Updates"))
+        self.showUpgradeAction = QAction(QIcon(("system-software-update", "gear")), i18n("Updates"), self)
+        self.connect(self.showUpgradeAction, pyqtSignal("triggered()"), lambda:self.cw.switchState(StateManager.UPGRADE))
+        self.cw.stateTab.addTab(QWidget(), QIcon(("system-software-update", "gear")), i18n("Updates"))
 
-        self.showPreferences = QAction(KIcon(("preferences-system", "package_settings")), i18n("Settings"), self)
-        self.connect(self.showPreferences, SIGNAL("triggered()"), self.settingsDialog.show)
+        self.showPreferences = QAction(QIcon(("preferences-system", "package_settings")), i18n("Settings"), self)
+        self.connect(self.showPreferences, pyqtSignal("triggered()"), self.settingsDialog.show)
 
-        self.actionHelp = QAction(KIcon("help"), i18n("Help"), self)
+        self.actionHelp = QAction(QIcon("help"), i18n("Help"), self)
         self.actionHelp.setShortcuts(QKeySequence.HelpContents)
-        self.connect(self.actionHelp, SIGNAL("triggered()"), self.showHelp)
+        self.connect(self.actionHelp, pyqtSignal("triggered()"), self.showHelp)
 
-        self.actionQuit = QAction(KIcon("exit"), i18n("Quit"), self)
+        self.actionQuit = QAction(QIcon("exit"), i18n("Quit"), self)
         self.actionQuit.setShortcuts(QKeySequence.Quit)
-        self.connect(self.actionQuit, SIGNAL("triggered()"), qApp.exit)
+        self.connect(self.actionQuit, pyqtSignal("triggered()"), qApp.exit)
 
         self.cw.menuButton.setMenu(QMenu('MainMenu', self.cw.menuButton))
-        self.cw.menuButton.setIcon(KIcon(("preferences-system", "package_settings")))
+        self.cw.menuButton.setIcon(QIcon(("preferences-system", "package_settings")))
         self.cw.menuButton.menu().clear()
 
         self.cw.contentHistory.hide()
@@ -170,7 +175,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.showAllAction.setChecked(True)
         self.cw.checkUpdatesButton.hide()
-        self.cw.checkUpdatesButton.setIcon(KIcon(("view-refresh", "reload")))
+        self.cw.checkUpdatesButton.setIcon(QIcon(("view-refresh", "reload")))
         self.cw.showBasketButton.clicked.connect(self.cw.showBasket)
 
         # Little time left for the new ui
@@ -189,11 +194,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.lang = "en"
 
-        if self.Pds.session == pds.Kde3 :
-            os.popen("khelpcenter /usr/share/package-manager/help/%s/main_help.html" %(self.lang))
-        else:
-            helpdialog.HelpDialog(self,helpdialog.MAINAPP)
-
+        helpdialog.HelpDialog(self,helpdialog.MAINAPP)
 
     def updateStatusBar(self, text, busy = False):
         if text == '':

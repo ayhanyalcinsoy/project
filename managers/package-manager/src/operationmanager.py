@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -54,7 +59,7 @@ class OperationManager(QObject):
 
         try:
             timeLeft = '%02d:%02d:%02d' % tuple([i for i in time.gmtime(left/rates)[3:6]])
-            self.emit(SIGNAL("elapsedTime(QString)"), timeLeft)
+            self.emit(pyqtSignal("elapsedTime(QString)"), timeLeft)
         except ZeroDivisionError:
             pass
 
@@ -77,7 +82,7 @@ class OperationManager(QObject):
         completed = humanReadableSize(self.totalDownloaded + self.curPkgDownloaded, ".2")
         total = humanReadableSize(self.totalSize, ".2")
 
-        self.emit(SIGNAL("downloadInfoChanged(QString, QString, QString)"), completed, total, self.rate)
+        self.emit(pyqtSignal("downloadInfoChanged(QString, QString, QString)"), completed, total, self.rate)
 
     def updateTotalOperationPercent(self):
         totalDownloaded = self.totalDownloaded + self.curPkgDownloaded
@@ -87,7 +92,7 @@ class OperationManager(QObject):
             percent = 100
 
         percent = min(100, percent)
-        self.emit(SIGNAL("progress(int)"), percent)
+        self.emit(pyqtSignal("progress(int)"), percent)
 
     def updatePackageProgress(self):
         try:
@@ -95,7 +100,7 @@ class OperationManager(QObject):
         except ZeroDivisionError:
             percent = 0
 
-        self.emit(SIGNAL("progress(int)"), percent)
+        self.emit(pyqtSignal("progress(int)"), percent)
 
     def addDesktopFile(self, desktopFile):
         if not self.state.inInstall():
@@ -110,7 +115,7 @@ class OperationManager(QObject):
                 self.desktopFiles.append(desktopFile)
 
     def exceptionHandler(self, exception):
-        self.emit(SIGNAL("exception(QString)"), str(exception))
+        self.emit(pyqtSignal("exception(QString)"), str(exception))
 
     def handler(self, package, signal, args):
 
@@ -128,32 +133,32 @@ class OperationManager(QObject):
             self.state.chainAction(args[0])
             if args[0] in self.nop: # no operation
                 return
-            self.emit(SIGNAL("finished(QString)"), args[0])
+            self.emit(pyqtSignal("finished(QString)"), args[0])
 
         elif signal == "fetching":
             if not args[0].startswith("pisi-index.xml"):
-                self.emit(SIGNAL("operationChanged(QString, QString)"), i18n("downloading"), args[0])
+                self.emit(pyqtSignal("operationChanged(QString, QString)"), i18n("downloading"), args[0])
             self.updateTotalDownloaded(args[4], args[5], args[2], args[3])
             self.calculateTimeLeft(args[2], args[3])
             self.updateTotalOperationPercent()
 
         elif signal == "updatingrepo":
-            self.emit(SIGNAL("operationChanged(QString, QString)"), signal, args[0])
+            self.emit(pyqtSignal("operationChanged(QString, QString)"), signal, args[0])
 
         elif signal == "error":
-            self.emit(SIGNAL("exception(QString)"), unicode(args[0]))
+            self.emit(pyqtSignal("exception(QString)"), args[0])
 
         elif signal == "started":
             if args[0] in self.nop: # no operation
                 return
             self.initialize()
-            self.emit(SIGNAL("started(QString)"), args[0])
+            self.emit(pyqtSignal("started(QString)"), args[0])
 
         elif signal in ["installing", "removing", "extracting", "configuring"]:
-            self.emit(SIGNAL("operationChanged(QString, QString)"), self._operation_signals[signal], args[0])
+            self.emit(pyqtSignal("operationChanged(QString, QString)"), self._operation_signals[signal], args[0])
 
         if signal == "cancelled":
-            self.emit(SIGNAL("operationCancelled()"))
+            self.emit(pyqtSignal("operationCancelled()"))
 
         elif signal == "desktopfile":
             self.addDesktopFile(str(args[0]))
@@ -171,4 +176,4 @@ class OperationManager(QObject):
             if self.packageNo > self.totalPackages:
                 self.totalPackages = self.packageNo
             self.updatePackageProgress()
-            self.emit(SIGNAL("packageChanged(int, int, QString)"), self.packageNo, self.totalPackages, i18n(signal))
+            self.emit(pyqtSignal("packageChanged(int, int, QString)"), self.packageNo, self.totalPackages, i18n(signal))

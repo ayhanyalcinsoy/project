@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,6 +26,7 @@ from pmutils import *
 from pmlogging import logger
 
 from statemanager import StateManager
+from pds import QIconLoader
 
 import config
 if config.USE_APPINFO:
@@ -75,37 +81,37 @@ class PackageModel(QAbstractTableModel):
         if role >= Qt.UserRole:
             try:
                 package = self.package(index)
-            except Exception, e:
+            except Exception as e:
                 logger.warning(e)
                 return _variant
 
         if role == SummaryRole:
-            return QVariant(unicode(package.summary))
+            return QVariant(package.summary)
         elif role == DescriptionRole:
-            return QVariant(unicode(package.description))
+            return QVariant(package.description)
         elif role == TypeRole:
-            return QVariant(unicode(package._type))
+            return QVariant(package._type)
         elif role == SizeRole:
-            return QVariant(unicode(humanReadableSize(self.iface.getPackageSize(package))))
+            return QVariant(humanReadableSize(self.iface.getPackageSize(package)))
         elif role == VersionRole:
-            return QVariant(unicode(package.version))
+            return QVariant(package.version)
         elif role == InstalledVersionRole:
             if self.state.inUpgrade():
-                return QVariant(unicode(self.iface.getInstalledVersion(package.name)))
+                return QVariant(self.iface.getInstalledVersion(package.name))
             return _variant
         elif role == RepositoryRole:
             if not self.state.inRemove():
-                return QVariant(unicode(self.iface.getPackageRepository(package.name)))
+                return QVariant(self.iface.getPackageRepository(package.name))
             return _variant
         elif role == HomepageRole:
-            return QVariant(unicode(package.source.homepage))
+            return QVariant(package.source.homepage)
         elif role == InstalledRole:
-            return QVariant(unicode(package.installed))
+            return QVariant(package.installed)
         elif role == ComponentRole:
-            return QVariant(unicode(package.partOf))
+            return QVariant(package.partOf)
         elif role == IsaRole:
             isa = '' if not len(package.isA) > 0 else package.isA[0]
-            return QVariant(unicode(isa))
+            return QVariant(isa)
         elif role == RateRole:
             if config.USE_APPINFO:
                 return QVariant(self.appinfo.getPackageScore(package.name))
@@ -115,7 +121,7 @@ class PackageModel(QAbstractTableModel):
         elif role == Qt.DecorationRole:
             package = self.package(index)
             if package.icon:
-                if package.icon in KIconLoader._available_icons:
+                if package.icon in QIconLoader._available_icons:
                     return QVariant(package.icon)
         return _variant
 
@@ -123,7 +129,7 @@ class PackageModel(QAbstractTableModel):
         if role == Qt.CheckStateRole and index.column() == 0:
             self.package_selections[index.row()] = value
             self.resetCachedInfos()
-            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), index, index)
+            self.emit(pyqtSignal("dataChanged(QModelIndex,QModelIndex)"), index, index)
             return True
         return False
 

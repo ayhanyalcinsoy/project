@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -14,13 +19,14 @@
 # Qt Stuff
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 import packagemodel # roles needed
 
-class PackageProxy(QtGui.QSortFilterProxyModel):
+class PackageProxy(QSortFilterProxyModel):
 
     def __init__(self, parent=None):
-        QtGui.QSortFilterProxyModel.__init__(self, parent)
+        QSortFilterProxyModel.__init__(self, parent)
         self.__modelCache = {}
         self.__filteredPackages = set()
 
@@ -42,9 +48,9 @@ class PackageProxy(QtGui.QSortFilterProxyModel):
     def filterAcceptsRow(self, source_row, source_parent):
         if self.filterRole() == packagemodel.GroupRole:
             sourceIndex = self.sourceModel().index(source_row, 0, source_parent)
-            return unicode(sourceIndex.data(Qt.DisplayRole).toString()) in self.__filteredPackages
+            return sourceIndex.data(Qt.DisplayRole).toString() in self.__filteredPackages
         else:
-            return QtGui.QSortFilterProxyModel.filterAcceptsRow(self, source_row, source_parent)
+            return QSortFilterProxyModel.filterAcceptsRow(self, source_row, source_parent)
 
     def getFilteredPackages(self):
         return list(self.__filteredPackages)
@@ -55,7 +61,7 @@ class PackageProxy(QtGui.QSortFilterProxyModel):
 
     def reset(self):
         self.__modelCache = {}
-        QtGui.QSortFilterProxyModel.reset(self)
+        QSortFilterProxyModel.reset(self)
 
     def resetModelCache(self):
         self.sourceModel().initPhase()

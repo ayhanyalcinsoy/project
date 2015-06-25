@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -27,9 +32,9 @@ from pmlogging import logger
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtNetwork import *
 
 import pds
-from pds.qiconloader import QIconLoader
 
 Pds = pds.Pds('package-manager', debug = False)
 # Force to use Default Session for testing
@@ -37,25 +42,23 @@ Pds = pds.Pds('package-manager', debug = False)
 # print 'Current session is : %s %s' % (Pds.session.Name, Pds.session.Version)
 
 i18n = Pds.session.i18n
-KIconLoader = QIconLoader(Pds)
-KIcon = KIconLoader.icon
 
 class PM:
 
     def connectOperationSignals(self):
         # Basic connections
-        self.connect(self.operation, SIGNAL("exception(QString)"), self.exceptionCaught)
-        self.connect(self.operation, SIGNAL("finished(QString)"), self.actionFinished)
-        self.connect(self.operation, SIGNAL("started(QString)"), self.actionStarted)
-        self.connect(self.operation, SIGNAL("operationCancelled()"), self.actionCancelled)
+        self.connect(self.operation, pyqtSignal("exception(QString)"), self.exceptionCaught)
+        self.connect(self.operation, pyqtSignal("finished(QString)"), self.actionFinished)
+        self.connect(self.operation, pyqtSignal("started(QString)"), self.actionStarted)
+        self.connect(self.operation, pyqtSignal("operationCancelled()"), self.actionCancelled)
 
         # ProgressDialog connections
-        self.connect(self.operation, SIGNAL("started(QString)"), self.progressDialog.updateActionLabel)
-        self.connect(self.operation, SIGNAL("progress(int)"), self.progressDialog.updateProgress)
-        self.connect(self.operation, SIGNAL("operationChanged(QString,QString)"), self.progressDialog.updateOperation)
-        self.connect(self.operation, SIGNAL("packageChanged(int, int, QString)"), self.progressDialog.updateStatus)
-        self.connect(self.operation, SIGNAL("elapsedTime(QString)"), self.progressDialog.updateRemainingTime)
-        self.connect(self.operation, SIGNAL("downloadInfoChanged(QString, QString, QString)"), self.progressDialog.updateCompletedInfo)
+        self.connect(self.operation, pyqtSignal("started(QString)"), self.progressDialog.updateActionLabel)
+        self.connect(self.operation, pyqtSignal("progress(int)"), self.progressDialog.updateProgress)
+        self.connect(self.operation, pyqtSignal("operationChanged(QString,QString)"), self.progressDialog.updateOperation)
+        self.connect(self.operation, pyqtSignal("packageChanged(int, int, QString)"), self.progressDialog.updateStatus)
+        self.connect(self.operation, pyqtSignal("elapsedTime(QString)"), self.progressDialog.updateRemainingTime)
+        self.connect(self.operation, pyqtSignal("downloadInfoChanged(QString, QString, QString)"), self.progressDialog.updateCompletedInfo)
 
     def notifyFinished(self):
         if not self.operation.totalPackages:
@@ -73,15 +76,15 @@ class PM:
             errorMessage = i18n("You are not authorized for this operation.")
         elif "HTTP Error 404" in message and not package == '':
             errorTitle = i18n("Pisi Error")
-            errorMessage = unicode(i18n("Package <b>%s</b> not found in repositories.<br>"\
+            errorMessage = i18n("Package <b>%s</b> not found in repositories.<br>"\
                                         "It may be upgraded or removed from the repository.<br>"\
-                                        "Please try upgrading repository informations.")) % package
+                                        "Please try upgrading repository informations.") % package
         elif "MIXING PACKAGES" in message:
             errorTitle = i18n("Pisi Error")
             errorMessage = i18n("Mixing file names and package names not supported yet.")
         elif "FILE NOT EXISTS" in message:
             errorTitle = i18n("Pisi Error")
-            errorMessage = unicode(i18n("File <b>%s</b> doesn't exists.")) % package
+            errorMessage = i18n("File <b>%s</b> doesn't exists.") % package
         elif "ALREADY RUNNING" in message:
             errorTitle = i18n("Pisi Error")
             errorMessage = i18n("Another instance of PiSi is running. Only one instance is allowed.")
@@ -96,7 +99,7 @@ class PM:
             self.runPostExceptionMethods()
         else:
             QTimer.singleShot(0, self.messageBox.exec_)
-            self.messageBox.buttonClicked.connect(self.runPostExceptionMethods)
+            self.messageBox.buttonClicked(self.runPostExceptionMethods)
 
     def runPreExceptionMethods(self):
         if hasattr(self, '_preexceptions'):
@@ -124,16 +127,17 @@ def askForActions(packages, reason, title, details_title):
     return msgbox.exec_() == QMessageBox.Yes
 
 def waitCursor():
-    QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+    QGuiApplication.setOverrideCursor(Qt.WaitCursor)
+
 
 def restoreCursor():
     # According to the Qt Documentation it should be called twice to reset
     # cursor to the default if one use waitCursor twice.
-    QApplication.restoreOverrideCursor()
-    QApplication.restoreOverrideCursor()
+    QGuiApplication.restoreOverrideCursor()
+    QGuiApplication.restoreOverrideCursor()
 
 def processEvents():
-    QApplication.processEvents()
+    QGuiApplication.processEvents()
 
 def set_proxy_settings():
     http = backend.pm.Iface().getConfig().get("general", "http_proxy")
@@ -216,7 +220,7 @@ def humanReadableSize(size, precision=".1"):
 def letters():
     start = end = None
     result = []
-    for index in xrange(sys.maxunicode + 1):
+    for index in range(sys.maxunicode + 1):
         c = unichr(index)
         if unicodedata.category(c)[0] == 'L':
             if start is None:

@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -27,6 +32,7 @@ from distutils.command.install import install
 
 PROJECT = about.appName
 
+
 def makeDirs(directory):
     if not os.path.exists(directory):
         try:
@@ -36,7 +42,7 @@ def makeDirs(directory):
 
 def remove(path):
     if os.path.exists(path):
-        print ' removing: ', path
+        print(' removing: '), path
         if os.path.isdir(path):
             shutil.rmtree(path)
         else:
@@ -74,7 +80,7 @@ def update_messages():
 
     # Update PO files
     for item in glob.glob1("po", "*.po"):
-        print "Updating .. ", item
+        print("Updating .. "), item
         os.system("msgmerge --update --no-wrap --sort-by-file po/%s po/%s.pot" % (item, PROJECT))
 
     # Cleanup
@@ -93,32 +99,34 @@ class Build(build):
         os.system("rm -rf build")
 
         # Copy codes
-        print "Copying PYs..."
+        print("Copying PYs...")
         os.system("cp -R src/ build/")
 
         # Copy icons
-        print "Copying Images..."
+        print( "Copying Images...")
         os.system("cp -R data/ build/")
 
-        print "Generating .desktop files..."
+        print("Generating .desktop files...")
         for filename in glob.glob("data/*.desktop.in"):
             os.system("intltool-merge -d po %s %s" % (filename, filename[:-3]))
 
-        print "Generating UIs..."
+        print("Generating UIs...")
         for filename in glob.glob1("ui", "*.ui"):
             os.system("pyuic5 -o build/ui_%s.py ui/%s -g %s" % (filename.split(".")[0], filename, PROJECT))
 
-        print "Generating RCs..."
+        print("Generating RCs...")
         for filename in glob.glob1("data", "*.qrc"):
             os.system("pyrcc5 data/%s -o build/%s_rc.py" % (filename, filename.split(".")[0]))
+
 
 class Install(install):
     def run(self):
         install.run(self)
+
         def rst2doc(lang):
             if os.path.exists(os.path.join('help', lang)):
                 for doc in ('main_help', 'preferences_help'):
-                    if os.path.exists(os.path.join('help', lang,'%s.rst' % doc)):
+                    if os.path.exists(os.path.join('help', lang, '%s.rst' % doc)):
                         os.system("rst2html --stylesheet help/help.css help/%s/%s.rst > help/%s/%s.html" % (lang, doc, lang, doc))
 
         if self.root:
@@ -136,7 +144,7 @@ class Install(install):
         project_dir = os.path.join(root_dir, PROJECT)
 
         # Make directories
-        print "Making directories..."
+        print("Making directories...")
         makeDirs(mime_icons_dir)
         makeDirs(icon_dir)
         makeDirs(mime_dir)
@@ -146,7 +154,7 @@ class Install(install):
         makeDirs(project_dir)
 
         # Install desktop files
-        print "Installing desktop files..."
+        print("Installing desktop files...")
 
         for filename in glob.glob("data/*.desktop"):
             shutil.copy(filename, apps_dir)
@@ -162,11 +170,11 @@ class Install(install):
             shutil.copy("data/%s-%s.png" % (PROJECT, size), "%s/application-x-pisi.png" % mime_size_dir)
 
         # Install codes
-        print "Installing codes..."
+        print("Installing codes...")
         os.system("cp -R build/* %s/" % project_dir)
 
         # Install locales
-        print "Installing locales..."
+        print("Installing locales...")
         for filename in glob.glob1("po", "*.po"):
             lang = filename.rsplit(".", 1)[0]
             rst2doc(lang)
@@ -175,17 +183,17 @@ class Install(install):
             shutil.copy("po/%s.mo" % lang, os.path.join(locale_dir, "%s/LC_MESSAGES" % lang, "%s.mo" % PROJECT))
         rst2doc('en')
         if os.path.exists('help'):
-            print "Installing help files..."
+            print("Installing help files...")
             os.system("cp -R help %s/" % project_dir)
 
         # Rename
-        print "Renaming application.py..."
+        print("Renaming application.py...")
         shutil.move(os.path.join(project_dir, "main.py"), os.path.join(project_dir, "%s.py" % PROJECT))
 
         # Modes
-        print "Changing file modes..."
-        os.chmod(os.path.join(project_dir, "%s.py" % PROJECT), 0755)
-        os.chmod(os.path.join(project_dir, "pm-install.py"), 0755)
+        print("Changing file modes...")
+        os.chmod(os.path.join(project_dir, "%s.py" % PROJECT), 0o755)
+        os.chmod(os.path.join(project_dir, "pm-install.py"), 0o755)
 
         # Symlink
         try:
@@ -213,7 +221,7 @@ class Uninstall(Command):
         apps_dir = os.path.join(root_dir, "applications")
         project_dir = os.path.join(root_dir, PROJECT)
 
-        print 'Uninstalling ...'
+        print('Uninstalling ...')
         remove(project_dir)
         remove(apps_dir +"/%s.desktop" % PROJECT)
         for filename in glob.glob1('po', '*.po'):
@@ -223,12 +231,12 @@ class Uninstall(Command):
 
 class Clean(clean):
     def run(self):
-        print 'Cleaning ...'
+        print('Cleaning ...')
         os.system('find -name *.pyc|xargs rm -rf')
         os.system('find -name *.mo|xargs rm -rf')
         for dirs in ('build', 'dist'):
             if os.path.exists(dirs):
-                print ' removing: ', dirs
+                print(' removing: '), dirs
                 shutil.rmtree(dirs)
         clean.run(self)
 
@@ -239,8 +247,8 @@ if "update_messages" in sys.argv:
 setup(
       name              = PROJECT,
       version           = about.version,
-      description       = unicode(about.PACKAGE),
-      license           = unicode('GPL'),
+      description       = about.PACKAGE,
+      license           = 'GPL',
       author            = "Pisi Linux Developers",
       author_email      = about.bugEmail,
       url               = about.homePage,

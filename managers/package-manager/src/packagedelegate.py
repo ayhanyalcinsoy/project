@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,6 +26,7 @@ from packagemodel import *
 from webdialog import WebDialog
 from rowanimator import RowAnimator
 
+from pds import QIconLoader
 import config
 
 DARKRED = QColor('darkred')
@@ -49,8 +55,8 @@ class PackageDelegate(QStyledItemDelegate):
         self.show_details_button = showDetailsButton
 
         self.rowAnimator = RowAnimator(parent.packageList)
-        self.defaultIcon = KIcon(('package-x-generic', 'package_applications'), 32)
-        self.defaultInstalledIcon = QIcon(KIconLoader.loadOverlayed(('package-x-generic', 'package_applications'), CHECK_ICON, 32))
+        self.defaultIcon = QIcon(('package-x-generic', 'package_applications'), 32)
+        self.defaultInstalledIcon = QIcon(QIconLoader.loadOverlayed(('package-x-generic', 'package_applications'), CHECK_ICON, 32))
         self.animatable = animatable
         self._max_height = ROW_HEIGHT
 
@@ -152,11 +158,11 @@ class PackageDelegate(QStyledItemDelegate):
 
         if _icon:
             overlay = [CHECK_ICON] if installed else []
-            KIconLoader._forceCache = True
-            pix = KIconLoader.loadOverlayed(_icon, overlay, 32)
+            QIconLoader._forceCache = True
+            pix = QIconLoader.loadOverlayed(_icon, overlay, 32)
             if not pix.isNull():
                 icon = QIcon(pix.scaled(QSize(32, 32), Qt.KeepAspectRatio, Qt.SmoothTransformation))
-            KIconLoader._forceCache = False
+            QIconLoader._forceCache = False
 
         if not icon:
             icon = self.defaultIcon if not installed else self.defaultInstalledIcon
@@ -357,7 +363,7 @@ class PackageDelegate(QStyledItemDelegate):
             # KeyCode 32 : Space key
             if event.key() == 32 and index.column() == index.model().columnCount() - 1:
                 animate_requested = True
-        if not unicode(model.data(index, DescriptionRole).toString()) == '' and animate_requested:
+        if not model.data(index, DescriptionRole).toString() == '' and animate_requested:
             self.rowAnimator.animate(index.row())
         return __event
 

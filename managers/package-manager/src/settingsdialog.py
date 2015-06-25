@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -54,10 +59,10 @@ class SettingsTab(QObject):
 
 class GeneralSettings(SettingsTab):
     def setupUi(self):
-        self.settings.moveUpButton.setIcon(KIcon("up"))
-        self.settings.moveDownButton.setIcon(KIcon("down"))
-        self.settings.addRepoButton.setIcon(KIcon(("list-add", "add")))
-        self.settings.removeRepoButton.setIcon(KIcon(("list-remove", "remove")))
+        self.settings.moveUpButton.setIcon(QIcon("up"))
+        self.settings.moveDownButton.setIcon(QIcon("down"))
+        self.settings.addRepoButton.setIcon(QIcon(("list-add", "add")))
+        self.settings.removeRepoButton.setIcon(QIcon(("list-remove", "remove")))
         self.initialize()
 
     def initialize(self):
@@ -71,27 +76,27 @@ class GeneralSettings(SettingsTab):
         self.settings.hideIfNoUpdate.setChecked(self.config.hideTrayIfThereIsNoUpdate())
 
     def connectSignals(self):
-        self.connect(self.settings.onlyGuiApp, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.showComponents, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.showIsA, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.intervalCheck, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.intervalSpin, SIGNAL("valueChanged(int)"), self.markChanged)
-        self.connect(self.settings.installUpdates, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.systemTray, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.hideIfNoUpdate, SIGNAL("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.onlyGuiApp, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.showComponents, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.showIsA, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.intervalCheck, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.intervalSpin, pyqtSignal("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.installUpdates, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.systemTray, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.hideIfNoUpdate, pyqtSignal("toggled(bool)"), self.markChanged)
 
     def save(self):
         if not self.settings.onlyGuiApp.isChecked() == self.config.showOnlyGuiApp():
             self.config.setShowOnlyGuiApp(self.settings.onlyGuiApp.isChecked())
-            self.settings.emit(SIGNAL("packagesChanged()"))
+            self.settings.emit(pyqtSignal("packagesChanged()"))
 
         if not self.settings.showComponents.isChecked() == self.config.showComponents():
             self.config.setShowComponents(self.settings.showComponents.isChecked())
-            self.settings.emit(SIGNAL("packageViewChanged()"))
+            self.settings.emit(pyqtSignal("packageViewChanged()"))
 
         if not self.settings.showIsA.isChecked() == self.config.showIsA():
             self.config.setShowIsA(self.settings.showIsA.isChecked())
-            self.settings.emit(SIGNAL("packageViewChanged()"))
+            self.settings.emit(pyqtSignal("packageViewChanged()"))
 
         if not self.settings.systemTray.isChecked() == self.config.systemTray() or \
            not self.settings.intervalSpin.value() == self.config.updateCheckInterval() or \
@@ -101,7 +106,7 @@ class GeneralSettings(SettingsTab):
             self.config.setUpdateCheck(self.settings.intervalCheck.isChecked())
             self.config.setUpdateCheckInterval(self.settings.intervalSpin.value())
             self.config.setHideTrayIfThereIsNoUpdate(self.settings.hideIfNoUpdate.isChecked())
-            self.settings.emit(SIGNAL("traySettingChanged()"))
+            self.settings.emit(pyqtSignal("traySettingChanged()"))
 
         self.config.setInstallUpdatesAutomatically(self.settings.installUpdates.isChecked())
 
@@ -138,16 +143,16 @@ class CacheSettings(SettingsTab):
         self.settings.bandwidthSpin.setValue(bandwidth_limit)
 
     def connectSignals(self):
-        self.connect(self.settings.clearCacheButton, SIGNAL("clicked()"), self.clearCache)
-        self.connect(self.settings.selectCacheDir, SIGNAL("clicked()"), self.selectCacheDir)
-        self.connect(self.settings.useCacheCheck, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.useCacheSpin, SIGNAL("valueChanged(int)"), self.markChanged)
-        self.connect(self.settings.useBandwidthLimit, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.bandwidthSpin, SIGNAL("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.clearCacheButton, pyqtSignal("clicked()"), self.clearCache)
+        self.connect(self.settings.selectCacheDir, pyqtSignal("clicked()"), self.selectCacheDir)
+        self.connect(self.settings.useCacheCheck, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.useCacheSpin, pyqtSignal("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.useBandwidthLimit, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.bandwidthSpin, pyqtSignal("valueChanged(int)"), self.markChanged)
         self.settings.openCacheDir.clicked.connect(self.openCacheDir)
 
     def openCacheDir(self):
-        cache_dir = unicode(self.settings.cacheDirPath.text())
+        cache_dir = self.settings.cacheDirPath.text()
         if path.exists(cache_dir):
             QDesktopServices.openUrl(QUrl("file://%s" % cache_dir, QUrl.TolerantMode))
 
@@ -166,12 +171,12 @@ class CacheSettings(SettingsTab):
                                                   QMessageBox.Yes | QMessageBox.No):
             try:
                 self.iface.clearCache(0)
-            except Exception, e:
+            except Exception as e:
                 self.settings.parent.cw.exceptionCaught(str(e))
 
     def save(self):
         self.iface.setCacheLimit(self.settings.useCacheCheck.isChecked(), self.settings.useCacheSpin.value())
-        self.iface.setConfig("directories", "cached_packages_dir", unicode(self.settings.cacheDirPath.text()))
+        self.iface.setConfig("directories", "cached_packages_dir", self.settings.cacheDirPath.text())
         if self.settings.useBandwidthLimit.isChecked():
             self.iface.setConfig("general", "bandwidth_limit", str(self.settings.bandwidthSpin.value()))
         else:
@@ -185,16 +190,16 @@ class RepositorySettings(SettingsTab):
         self.initialize(firstRun = True)
 
     def connectSignals(self):
-        self.connect(self.settings.addRepoButton, SIGNAL("clicked()"), self.addRepository)
-        self.connect(self.settings.removeRepoButton, SIGNAL("clicked()"), self.removeRepository)
-        self.connect(self.settings.moveUpButton, SIGNAL("clicked()"), self.moveUp)
-        self.connect(self.settings.moveDownButton, SIGNAL("clicked()"), self.moveDown)
-        self.connect(self.settings.repoListView, SIGNAL("itemChanged(QTableWidgetItem*)"), self.markChanged)
+        self.connect(self.settings.addRepoButton, pyqtSignal("clicked()"), self.addRepository)
+        self.connect(self.settings.removeRepoButton, pyqtSignal("clicked()"), self.removeRepository)
+        self.connect(self.settings.moveUpButton, pyqtSignal("clicked()"), self.moveUp)
+        self.connect(self.settings.moveDownButton, pyqtSignal("clicked()"), self.moveDown)
+        self.connect(self.settings.repoListView, pyqtSignal("itemChanged(QTableWidgetItem*)"), self.markChanged)
 
     def get_repo_names(self):
         repos = []
         for row in range(self.settings.repoListView.rowCount()):
-            repos.append(unicode(self.settings.repoListView.item(row, 1).text()))
+            repos.append(self.settings.repoListView.item(row, 1).text())
         return repos
 
     def initialize(self, firstRun = False):
@@ -205,7 +210,7 @@ class RepositorySettings(SettingsTab):
         self.__clear()
 
         for name, address in self.repositories:
-            self.__insertRow(unicode(name), address)
+            self.__insertRow(name, address)
 
     def __clear(self):
         while self.settings.repoListView.rowCount():
@@ -215,7 +220,7 @@ class RepositorySettings(SettingsTab):
         currentRow = self.settings.repoListView.rowCount()
         self.settings.repoListView.insertRow(currentRow)
         checkbox = QCheckBox(self.settings.repoListView)
-        self.connect(checkbox, SIGNAL("toggled(bool)"), self.markChanged)
+        self.connect(checkbox, pyqtSignal("toggled(bool)"), self.markChanged)
         self.settings.repoListView.setCellWidget(currentRow, 0, checkbox)
         self.settings.repoListView.cellWidget(currentRow, 0).setChecked(self.iface.isRepoActive(repoName))
 
@@ -231,7 +236,7 @@ class RepositorySettings(SettingsTab):
 
     def addRepository(self):
         self.repoDialog = repodialog.RepoDialog()
-        self.connect(self.repoDialog.buttonBox, SIGNAL("accepted()"), self.__addRepository)
+        self.connect(self.repoDialog.buttonBox, pyqtSignal("accepted()"), self.__addRepository)
         self.repoDialog.show()
 
     def __addRepository(self):
@@ -349,19 +354,19 @@ class ProxySettings(SettingsTab):
                 self.settings.passwordProxy.setText(items['pass'])
 
     def connectSignals(self):
-        self.connect(self.settings.useHttpForAll, SIGNAL("linkActivated(const QString&)"), self.useHttpForAll)
-        self.connect(self.settings.httpProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.httpProxyPort, SIGNAL("valueChanged(int)"), self.markChanged)
-        self.connect(self.settings.httpsProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.httpsProxyPort, SIGNAL("valueChanged(int)"), self.markChanged)
-        self.connect(self.settings.ftpProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.ftpProxyPort, SIGNAL("valueChanged(int)"), self.markChanged)
-        self.connect(self.settings.userProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.passwordProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.domainProxy, SIGNAL("textChanged(const QString&)"), self.markChanged)
-        self.connect(self.settings.useProxy, SIGNAL("toggled(bool)"), self.markChanged)
-        self.connect(self.settings.useProxy, SIGNAL("toggled(bool)"), self.checkDeSettings)
-        self.connect(self.settings.useDe, SIGNAL("linkActivated(const QString&)"), self.getSettingsFromDe)
+        self.connect(self.settings.useHttpForAll, pyqtSignal("linkActivated(const QString&)"), self.useHttpForAll)
+        self.connect(self.settings.httpProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.httpProxyPort, pyqtSignal("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.httpsProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.httpsProxyPort, pyqtSignal("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.ftpProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.ftpProxyPort, pyqtSignal("valueChanged(int)"), self.markChanged)
+        self.connect(self.settings.userProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.passwordProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.domainProxy, pyqtSignal("textChanged(const QString&)"), self.markChanged)
+        self.connect(self.settings.useProxy, pyqtSignal("toggled(bool)"), self.markChanged)
+        self.connect(self.settings.useProxy, pyqtSignal("toggled(bool)"), self.checkDeSettings)
+        self.connect(self.settings.useDe, pyqtSignal("linkActivated(const QString&)"), self.getSettingsFromDe)
 
     def useHttpForAll(self, link):
         self.settings.httpsProxy.setText(self.settings.httpProxy.text())
@@ -445,9 +450,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.proxySettings = ProxySettings(self)
 
     def connectSignals(self):
-        self.connect(self.buttonOk, SIGNAL("clicked()"), self.saveSettings)
-        self.connect(self.buttonCancel, SIGNAL("clicked()"), self.cancelSettings)
-        self.connect(self.buttonHelp, SIGNAL("clicked()"), self.showHelp)
+        self.connect(self.buttonOk, pyqtSignal("clicked()"), self.saveSettings)
+        self.connect(self.buttonCancel, pyqtSignal("clicked()"), self.cancelSettings)
+        self.connect(self.buttonHelp, pyqtSignal("clicked()"), self.showHelp)
 
     def cancelSettings(self):
         for tab in (self.generalSettings, self.cacheSettings, \
@@ -460,7 +465,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             try:
                 if settings.changed:
                     settings.save()
-            except Exception, e:
+            except Exception as e:
                 self.parent.cw.exceptionCaught(str(e))
             finally:
                 if settings.changed:

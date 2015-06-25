@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,6 +18,7 @@
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 import config
@@ -51,7 +57,7 @@ class StateManager(QObject):
     def setState(self, state):
         self.state = state
         self.reset()
-        self.emit(SIGNAL("repositoriesChanged()"))
+        self.emit(pyqtSignal("repositoriesChanged()"))
 
     def getState(self):
         return self.state
@@ -144,7 +150,7 @@ class StateManager(QObject):
             return list(set(self.packages()).intersection(group_packages))
 
     def chainAction(self, operation):
-        chains = { "System.Manager.setRepositories":lambda:self.emit(SIGNAL("repositoriesChanged()")) }
+        chains = { "System.Manager.setRepositories":lambda:self.emit(pyqtSignal("repositoriesChanged()")) }
         if chains.has_key(operation):
             chains[operation]()
 

@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -28,6 +33,7 @@ except ImportError:
 else:
     USE_APPINFO = True
 
+
 class Config:
     def __init__(self, organization, product):
         self.config = QSettings(organization, product)
@@ -48,6 +54,7 @@ class Config:
         if defaults.has_key(option):
             return defaults[option]
         return value
+
 
 class PMConfig(Config):
     def __init__(self):
@@ -100,4 +107,3 @@ class PMConfig(Config):
 
     def setShowIsA(self, enabled):
         self.setValue("ShowIsA", enabled)
-

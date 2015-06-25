@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -112,10 +117,10 @@ class PmWindow(QDialog, PM, Ui_PmWindow):
         self.connectOperationSignals()
 
         self.button_install.clicked.connect(self.installPackages)
-        self.button_install.setIcon(KIcon(("list-add", "add")))
+        self.button_install.setIcon(QIcon(("list-add", "add")))
 
         self.button_cancel.clicked.connect(self.actionCancelled)
-        self.button_cancel.setIcon(KIcon("cancel"))
+        self.button_cancel.setIcon(QIcon("cancel"))
 
         self.rejected.connect(self.actionCancelled)
 

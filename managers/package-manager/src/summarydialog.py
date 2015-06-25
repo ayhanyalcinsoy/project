@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -17,25 +22,25 @@ from PyQt5.QtCore import *
 
 from ui_summarydialog import Ui_SummaryDialog
 from ui_appitem import Ui_ApplicationItem
-
+from pds import QIconLoader
 from pmutils import *
 
 import backend
 import localedata
 import desktopparser
 
-class ApplicationItem(QtGui.QListWidgetItem):
+class ApplicationItem(QListWidgetItem):
     def __init__(self, name, genericName, icon, command, parent=None):
-        QtGui.QListWidgetItem.__init__(self, parent)
+        QListWidgetItem.__init__(self, parent)
 
         self.name = name
         self.genericName = genericName
         self.icon = icon
         self.command = command.split()[0]
 
-class ApplicationItemWidget(QtGui.QWidget, Ui_ApplicationItem):
+class ApplicationItemWidget(QWidget, Ui_ApplicationItem):
     def __init__(self, item, parent=None):
-        QtGui.QListWidgetItem.__init__(self, parent)
+        QListWidgetItem.__init__(self, parent)
         self.setupUi(self)
         self.item = item
         self.initialize()
@@ -45,10 +50,10 @@ class ApplicationItemWidget(QtGui.QWidget, Ui_ApplicationItem):
         self.appName.setText(self.item.name)
 
         icon = str(self.item.icon).split('.')[:-1]
-        icon = KIconLoader.load(icon)
+        icon = QIconLoader.load(icon)
 
         if icon.isNull():
-            icon = KIconLoader.load('package')
+            icon = QIconLoader.load('package')
 
         self.appIcon.setPixmap(
                                icon.scaled(QSize(32, 32),
@@ -67,9 +72,9 @@ class ApplicationItemWidget(QtGui.QWidget, Ui_ApplicationItem):
     def mouseDoubleClickEvent(self, event):
         os.popen('%s&' % self.item.command)
 
-class SummaryDialog(QtGui.QDialog, Ui_SummaryDialog):
+class SummaryDialog(QDialog, Ui_SummaryDialog):
     def __init__(self, parent = None):
-        QtGui.QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent)
         self.setupUi(self)
         self.iface = backend.pm.Iface()
         self.lang = localedata.setSystemLocale(justGet = True)
@@ -95,8 +100,8 @@ class SummaryDialog(QtGui.QDialog, Ui_SummaryDialog):
         parser = desktopparser.DesktopParser()
         parser.read("/%s" % str(desktopFile))
 
-        nodisplay = unicode(parser.safe_get_locale('Desktop Entry', 'NoDisplay', None))
-        terminal = unicode(parser.safe_get_locale('Desktop Entry', 'Terminal', None))
+        nodisplay = parser.safe_get_locale('Desktop Entry', 'NoDisplay', None)
+        terminal = parser.safe_get_locale('Desktop Entry', 'Terminal', None)
         if nodisplay == "true" or terminal == "true":
             return
 
@@ -104,8 +109,8 @@ class SummaryDialog(QtGui.QDialog, Ui_SummaryDialog):
         command = parser.safe_get_locale('Desktop Entry', 'Exec', None)
         if not command:
             return
-        name = unicode(parser.safe_get_locale('Desktop Entry', 'Name', self.lang))
-        genericName = unicode(parser.safe_get_locale('Desktop Entry', 'GenericName', self.lang))
+        name = parser.safe_get_locale('Desktop Entry', 'Name', self.lang)
+        genericName = parser.safe_get_locale('Desktop Entry', 'GenericName', self.lang)
         if not genericName:
             genericName = name
             name = ""

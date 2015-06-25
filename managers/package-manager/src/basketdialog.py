@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -10,8 +15,9 @@
 #
 # Please read the COPYING file
 
-from PyQt5 import QtGui
+from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from packagemodel import GroupRole
 from packageproxy import PackageProxy
@@ -44,16 +50,16 @@ class BasketDialog(PAbstractBox, Ui_BasketDialog):
 
         self.actionButton.clicked.connect(self.action)
         self.cancelButton.clicked.connect(self._hide)
-        self.cancelButton.setIcon(KIcon("cancel"))
+        self.cancelButton.setIcon(QIcon("cancel"))
 
         self.clearButton.clicked.connect(self.clearSelections)
-        self.clearButton.setIcon(KIcon("trashcan_empty"))
+        self.clearButton.setIcon(QIcon("trashcan_empty"))
 
     def clearSelections(self):
-        sure = QtGui.QMessageBox.question(self, i18n("Clear Basket"),
+        sure = QMessageBox.question(self, i18n("Clear Basket"),
                                                 i18n("Do you want to clear all selections ?"),
-                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        if sure == QtGui.QMessageBox.Yes:
+                                                QMessageBox.Yes | QMessageBox.No)
+        if sure == QMessageBox.Yes:
             self._hide()
             self.state.state = self.parent.cw.currentState
             self.parent.cw.initialize()
@@ -64,9 +70,9 @@ class BasketDialog(PAbstractBox, Ui_BasketDialog):
         self.__updateList(self.packageList, self.model.selectedPackages())
         try:
             self.filterExtras()
-        except Exception, e:
-            messageBox = QtGui.QMessageBox(i18n("Pisi Error"), unicode(e),
-                    QtGui.QMessageBox.Critical, QtGui.QMessageBox.Ok, 0, 0)
+        except Exception as e:
+            messageBox = QMessageBox(i18n("Pisi Error"), e,
+                    QMessageBox.Critical, QMessageBox.Ok, 0, 0)
             QTimer.singleShot(0, restoreCursor)
             messageBox.exec_()
             return
@@ -84,20 +90,20 @@ class BasketDialog(PAbstractBox, Ui_BasketDialog):
 
     def connectModelSignals(self):
         self.connect(self.packageList.model(),
-                SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                pyqtSignal("dataChanged(QModelIndex,QModelIndex)"),
                 self.filterExtras)
 
         self.connect(self.packageList.model(),
-                SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                pyqtSignal("dataChanged(QModelIndex,QModelIndex)"),
                 self.updateTotal)
 
     def disconnectModelSignals(self):
         self.disconnect(self.packageList.model(),
-                SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                pyqtSignal("dataChanged(QModelIndex,QModelIndex)"),
                 self.filterExtras)
 
         self.disconnect(self.packageList.model(),
-                SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                pyqtSignal("dataChanged(QModelIndex,QModelIndex)"),
                 self.updateTotal)
 
     def __initList(self, packageList):

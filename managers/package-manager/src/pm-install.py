@@ -1,7 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010 TUBITAK/UEKAE
+# Forked from Pardus Package Manager
+# Copyright (C) 2012-2015, PisiLinux
+# Gökmen Göksel
+# Faik Uygur
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -42,9 +47,9 @@ if __name__ == '__main__':
         DBusQtMainLoop(set_as_default = True)
 
     # Use raster to make it faster
-    QApplication.setGraphicsSystem('raster')
+    QGuiApplication.setGraphicsSystem('raster')
 
-    usage = unicode(i18n("%prog packages_to_install"))
+    usage = i18n("%prog packages_to_install")
     parser = OptionParser(usage=usage)
 
     packages = filter(lambda x: not x.startswith('-'), sys.argv[1:])
