@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009, TUBITAK/UEKAE
+# Forked from Pardus Service Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -22,13 +25,9 @@ import servicemanager.context as ctx
 import servicemanager.about as about
 
 # Qt Stuff
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
-# Enable plugin if session is Kde4
-if ctx.Pds.session == ctx.pds.Kde4:
-    def CreatePlugin(widget_parent, parent, component_data):
-        from servicemanager.kcmodule import ServiceManager
-        return ServiceManager(component_data, parent)
 
 if __name__ == '__main__':
 
@@ -37,48 +36,25 @@ if __name__ == '__main__':
         from dbus.mainloop.qt import DBusQtMainLoop
         DBusQtMainLoop(set_as_default = True)
 
-    # Pds vs KDE
-    if ctx.Pds.session == ctx.pds.Kde4:
+    # Application Stuff
+    from servicemanager.base import MainManager
 
-        # PyKDE4 Stuff
-        from PyKDE4.kdeui import *
-        from PyKDE4.kdecore import *
+    # Pds Stuff
+    from pds.quniqueapp import QUniqueApplication
+    from servicemanager.context import i18n
 
-        # Application Stuff
-        from servicemanager.standalone import ServiceManager
-        from servicemanager.about import aboutData
+    # Create a QUniqueApllication instance
+    app = QUniqueApplication(sys.argv, catalog=about.appName)
 
-        # Set Command-line arguments
-        KCmdLineArgs.init(sys.argv, aboutData)
-
-        # Create a Kapplitcation instance
-        app = KApplication()
-
-        # Create Main Widget
-        mainWindow = ServiceManager(None, aboutData.appName)
-        mainWindow.show()
-
-    else:
-
-        # Application Stuff
-        from servicemanager.base import MainManager
-
-        # Pds Stuff
-        from pds.quniqueapp import QUniqueApplication
-        from servicemanager.context import KIcon, i18n
-
-        # Create a QUniqueApllication instance
-        app = QUniqueApplication(sys.argv, catalog=about.appName)
-
-        # Create Main Widget and make some settings
-        mainWindow = MainManager(None)
-        mainWindow.show()
-        mainWindow.resize(640, 480)
-        mainWindow.setWindowTitle(i18n(about.PACKAGE))
-        mainWindow.setWindowIcon(KIcon(about.icon))
+    # Create Main Widget and make some settings
+    mainWindow = MainManager(None)
+    mainWindow.show()
+    mainWindow.resize(640, 480)
+    mainWindow.setWindowTitle(i18n(about.PACKAGE))
+    mainWindow.setWindowIcon(QIcon(about.icon))
 
     # Create connection for lastWindowClosed signal to quit app
-    app.connect(app, SIGNAL('lastWindowClosed()'), app.quit)
+    app.connect(app, pyqtSignal('lastWindowClosed()'), app.quit)
 
     # Run the applications
     app.exec_()

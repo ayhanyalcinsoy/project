@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, TUBITAK/UEKAE
+# Forked from Pardus Service Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -16,25 +19,22 @@ import sys
 import comar
 
 # Qt Stuff
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
 # Application Stuff
 from servicemanager.backend import ServiceIface
 from servicemanager.ui_main import Ui_mainManager
 from servicemanager.widgets import ServiceItemWidget, ServiceItem
 
-# Pds vs KDE
+# Pds
 import servicemanager.context as ctx
-if ctx.Pds.session == ctx.pds.Kde4:
-    from PyKDE4.kdecore import i18n
-else:
-    from servicemanager.context import i18n
+from servicemanager.context import i18n
 
-class MainManager(QtGui.QWidget):
-    def __init__(self, parent, standAlone=True):
-        QtGui.QWidget.__init__(self, parent)
+class MainManager(QWidget):
+    def __init__(self, parent, standAlone=False):
+        QWidget.__init__(self, parent)
 
         # Create the ui
         self.ui = Ui_mainManager()
@@ -64,8 +64,8 @@ class MainManager(QtGui.QWidget):
         self.getServices()
 
         # search line, we may use model view for correct filtering
-        self.connect(self.ui.lineSearch, SIGNAL("textChanged(QString)"), self.doSearch)
-        self.connect(self.ui.filterBox, SIGNAL("currentIndexChanged(int)"), self.filterServices)
+        self.connect(self.ui.lineSearch, pyqtSignal("textChanged(QString)"), self.doSearch)
+        self.connect(self.ui.filterBox, pyqtSignal("currentIndexChanged(int)"), self.filterServices)
 
     def hiddenListWorkaround(self):
         """
@@ -79,7 +79,7 @@ class MainManager(QtGui.QWidget):
 
     def doSearch(self, text):
         for service in self.services:
-            if service.find(text) >= 0 or unicode(self.widgets[service].desc).lower().find(unicode(text).lower()) >= 0:
+            if service.find(text) >= 0 or self.widgets[service].desc.lower().find(text.lower()) >= 0:
                 self.widgets[service].item.setHidden(False)
             else:
                 self.widgets[service].item.setHidden(True)
@@ -93,7 +93,7 @@ class MainManager(QtGui.QWidget):
 
     def showFail(self, exception):
 
-        exception = unicode(exception)
+        exception = exception
         if exception.startswith('tr.org.pardus.comar.Comar.PolicyKit'):
             errorTitle = i18n("Authentication Error")
             errorMessage = i18n("You are not authorized for this operation.")
@@ -103,7 +103,7 @@ class MainManager(QtGui.QWidget):
         messageBox = QMessageBox(errorTitle, errorMessage, QMessageBox.Critical, QMessageBox.Ok, 0, 0)
 
         if not exception.startswith('tr.org.pardus.comar.Comar.PolicyKit'):
-            messageBox.setDetailedText(unicode(exception))
+            messageBox.setDetailedText(exception)
 
         messageBox.exec_()
 

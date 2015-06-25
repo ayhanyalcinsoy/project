@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, TUBITAK/UEKAE
+# Forked from Pardus Service Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -12,16 +15,13 @@
 #
 
 # Qt Stuff
-from PyQt5 import QtGui
 from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-# Pds vs KDE
+# Pds
 import servicemanager.context as ctx
-if ctx.Pds.session == ctx.pds.Kde4:
-    from PyKDE4.kdeui import KIcon
-    from PyKDE4.kdecore import i18n
-else:
-    from servicemanager.context import KIcon, i18n
+from servicemanager.context import i18n
 
 # Application Stuff
 from servicemanager.ui_item import Ui_ServiceItemWidget
@@ -39,23 +39,23 @@ import locale
 # Pisi Stuff
 import pisi
 
-class ServiceItem(QtGui.QListWidgetItem):
+class ServiceItem(QListWidgetItem):
 
     def __init__(self, package, parent):
-        QtGui.QListWidgetItem.__init__(self, parent)
+        QListWidgetItem.__init__(self, parent)
 
         self.package = package
 
-class ServiceItemWidget(QtGui.QWidget):
+class ServiceItemWidget(QWidget):
 
     def __init__(self, package, parent, item):
-        QtGui.QWidget.__init__(self, None)
+        QWidget.__init__(self, None)
 
         self.ui = Ui_ServiceItemWidget()
         self.ui.setupUi(self)
 
         self.busy = QProgressIndicator(self)
-        self.busy.setMinimumSize(QtCore.QSize(32, 32))
+        self.busy.setMinimumSize(QSize(32, 32))
         self.ui.mainLayout.insertWidget(0, self.busy)
         self.ui.spacer.hide()
         self.busy.hide()
@@ -64,10 +64,10 @@ class ServiceItemWidget(QtGui.QWidget):
 
         self.toggleButtons()
 
-        self.ui.buttonStart.setIcon(KIcon("media-playback-start"))
-        self.ui.buttonStop.setIcon(KIcon("media-playback-stop"))
-        self.ui.buttonReload.setIcon(KIcon("view-refresh"))
-        self.ui.buttonInfo.setIcon(KIcon("dialog-information"))
+        self.ui.buttonStart.setIcon(QIcon("media-playback-start"))
+        self.ui.buttonStop.setIcon(QIcon("media-playback-stop"))
+        self.ui.buttonReload.setIcon(QIcon("view-refresh"))
+        self.ui.buttonInfo.setIcon(QIcon("dialog-information"))
 
         self.toggled = False
         self.root = parent
@@ -78,11 +78,11 @@ class ServiceItemWidget(QtGui.QWidget):
 
         self.type = None
         self.desc = None
-        self.connect(self.ui.buttonStart, SIGNAL("clicked()"), self.setService)
-        self.connect(self.ui.buttonStop, SIGNAL("clicked()"), self.setService)
-        self.connect(self.ui.buttonReload, SIGNAL("clicked()"), self.setService)
-        self.connect(self.ui.checkStart, SIGNAL("clicked()"), self.setService)
-        self.connect(self.ui.buttonInfo, SIGNAL("clicked()"), self.info.showDescription)
+        self.connect(self.ui.buttonStart, pyqtSignal("clicked()"), self.setService)
+        self.connect(self.ui.buttonStop, pyqtSignal("clicked()"), self.setService)
+        self.connect(self.ui.buttonReload, pyqtSignal("clicked()"), self.setService)
+        self.connect(self.ui.checkStart, pyqtSignal("clicked()"), self.setService)
+        self.connect(self.ui.buttonInfo, pyqtSignal("clicked()"), self.info.showDescription)
 
     def updateService(self, data, firstRun):
         self.type, self.desc, serviceState = data
@@ -104,7 +104,7 @@ class ServiceItemWidget(QtGui.QWidget):
         self.ui.buttonStop.setEnabled(self.running)
         self.ui.buttonReload.setEnabled(self.running)
 
-        self.ui.labelStatus.setPixmap(KIcon(icon).pixmap(32, 32))
+        self.ui.labelStatus.setPixmap(QIcon(icon).pixmap(32, 32))
         self.showStatus()
         self.runningAtStart = False
         if state in ('on', 'stopped'):
@@ -127,7 +127,7 @@ class ServiceItemWidget(QtGui.QWidget):
                 self.iface.restart(self.package)
             elif self.sender() == self.ui.checkStart:
                 self.iface.setEnable(self.package, self.ui.checkStart.isChecked())
-        except Exception, msg:
+        except Exception as msg:
             self.showStatus()
             self.root.showFail(msg)
 
@@ -168,11 +168,11 @@ def getDescription(service):
         lang = str(locale.getdefaultlocale()[0].split("_")[0])
         desc = pisi.api.info_name(service)[0].package.description
         if desc.has_key(lang):
-            return unicode(desc[lang])
-        return unicode(desc['en'])
-    except Exception, msg:
+            return desc[lang]
+        return desc['en']
+    except Exception as msg:
         # print "ERROR:", msg
-        return unicode(i18n('Service information is not available'))
+        return i18n('Service information is not available')
 
 class ServiceItemInfo(PAbstractBox):
 
@@ -182,7 +182,7 @@ class ServiceItemInfo(PAbstractBox):
         self.ui = Ui_InfoWidget()
         self.ui.setupUi(self)
         self.ui.buttonHide.clicked.connect(self.hideDescription)
-        self.ui.buttonHide.setIcon(KIcon("dialog-close"))
+        self.ui.buttonHide.setIcon(QIcon("dialog-close"))
 
         self._animation = 2
         self._duration = 500
@@ -196,7 +196,7 @@ class ServiceItemInfo(PAbstractBox):
         self.ui.description.setText(desc)
         self.ui.description.setToolTip('\n'.join(textwrap.wrap(desc)))
         self.animate(start = MIDLEFT, stop = MIDCENTER)
-        QtGui.qApp.processEvents()
+        qApp.processEvents()
 
     def hideDescription(self):
         if self.isVisible():
