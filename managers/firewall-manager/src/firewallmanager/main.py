@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2009 TUBITAK/UEKAE
+# Forked from Pardus Firewall Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -14,6 +17,7 @@
 # PyQt
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 # UI
 from firewallmanager.ui_main import Ui_MainWidget
 
@@ -34,11 +38,11 @@ from firewallmanager.pagedialog import PageDialog
 
 #Context 
 import context as ctx
-from context import *
+from context import i18n
 
-class MainWidget(QtGui.QWidget, Ui_MainWidget):
+class MainWidget(QWidget, Ui_MainWidget):
     def __init__(self, parent, embed=False):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         if embed:
             self.setupUi(parent)
@@ -46,7 +50,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             self.setupUi(self)
 
         # Animation
-        self.animator = QtCore.QTimeLine(ANIM_TIME, self)
+        self.animator = QTimeLine(ANIM_TIME, self)
         self.animationLast = ANIM_HIDE
 
         # Initialize heights of animated widgets
@@ -78,13 +82,13 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         # TBD
 
         # Signals
-        self.connect(self.comboFilter, QtCore.SIGNAL("currentIndexChanged(int)"), self.slotFilterChanged)
-        self.connect(self.pushNew, QtCore.SIGNAL("triggered(QAction*)"), self.slotOpenEdit)
-        self.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), self.slotSaveEdit)
-        self.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), self.slotCancelEdit)
-        self.connect(self.animator, QtCore.SIGNAL("frameChanged(int)"), self.slotAnimate)
-        self.connect(self.animator, QtCore.SIGNAL("finished()"), self.slotAnimationFinished)
-        self.connect(self.widgetService, QtCore.SIGNAL("stateChanged(int)"), self.slotServiceChanged)
+        self.connect(self.comboFilter, pyqtSignal("currentIndexChanged(int)"), self.slotFilterChanged)
+        self.connect(self.pushNew, pyqtSignal("triggered(QAction*)"), self.slotOpenEdit)
+        self.connect(self.buttonBox, pyqtSignal("accepted()"), self.slotSaveEdit)
+        self.connect(self.buttonBox, pyqtSignal("rejected()"), self.slotCancelEdit)
+        self.connect(self.animator, pyqtSignal("frameChanged(int)"), self.slotAnimate)
+        self.connect(self.animator, pyqtSignal("finished()"), self.slotAnimationFinished)
+        self.connect(self.widgetService, pyqtSignal("stateChanged(int)"), self.slotServiceChanged)
 
     def checkBackend(self):
         """
@@ -133,9 +137,9 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         """
         widget = ItemWidget(self.listItems, id_, title, description, type_, icon, state)
 
-        self.connect(widget, QtCore.SIGNAL("stateChanged(int)"), self.slotItemState)
-        self.connect(widget, QtCore.SIGNAL("editClicked()"), self.slotItemEdit)
-        self.connect(widget, QtCore.SIGNAL("deleteClicked()"), self.slotItemDelete)
+        self.connect(widget, pyqtSignal("stateChanged(int)"), self.slotItemState)
+        self.connect(widget, pyqtSignal("editClicked()"), self.slotItemEdit)
+        self.connect(widget, pyqtSignal("deleteClicked()"), self.slotItemDelete)
 
         return widget
 
@@ -147,7 +151,7 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         type_ = ""
 
         # Build widget and widget item
-        widget = self.makeItemWidget(id_, name, description, type_,KIcon(icon), state)
+        widget = self.makeItemWidget(id_, name, description, type_,QIcon(icon), state)
         widgetItem = ItemListWidgetItem(self.listItems, widget)
 
         # Rules are static
@@ -173,9 +177,9 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             modules = args[0]
             for name in modules:
                 title, description, icon = self.iface.moduleInfo(name)
-                state = QtCore.Qt.Unchecked
+                state = Qt.Unchecked
                 if self.iface.getModuleState(name) == "on":
-                    state = QtCore.Qt.Checked
+                    state = Qt.Checked
                 self.addItem(name, title, description, icon, state)
         self.iface.listModules(handler)
 
@@ -195,19 +199,19 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
             Builds item filter.
         """
         self.comboFilter.clear()
-        self.comboFilter.addItem(i18n("All"), QtCore.QVariant("all"))
+        self.comboFilter.addItem(i18n("All"), QVariant("all"))
 
     def buildMenu(self):
         """
             Builds "Add New" button menu.
         """
         # Create menu for "new" button
-        menu = QtGui.QMenu(self.pushNew)
+        menu = QMenu(self.pushNew)
         self.pushNew.setMenu(menu)
 
         # New item
-        action = QtGui.QAction(i18n("Action"), self)
-        action.setData(QtCore.QVariant("action"))
+        action = QAction(i18n("Action"), self)
+        action.setData(QVariant("action"))
         menu.addAction(action)
 
     def showEditBox(self, id_, type_):
@@ -249,12 +253,12 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         """
         widget = self.sender()
         try:
-            self.iface.setModuleState(widget.getId(), state == QtCore.Qt.Checked)
-        except Exception, e:
+            self.iface.setModuleState(widget.getId(), state == Qt.Checked)
+        except Exception as e:
             if "Comar.PolicyKit" in e._dbus_error_name:
                 createMessage(self,"Error","Access denied.")
             else:
-                createMessage(self,"Error", unicode(e))
+                createMessage(self,"Error", e)
             self.buildItemList()
 
     def slotItemEdit(self):
@@ -273,11 +277,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         if dialog.exec_():
             try:
                 self.iface.setModuleParameters(widget.getId(), dialog.getValues())
-            except Exception, e:
+            except Exception as e:
                 if "Comar.PolicyKit" in e._dbus_error_name:
                     createMessage(self,"Error","Access denied.")
                 else:
-                    createMessage(self,"Error", unicode(e))
+                    createMessage(self,"Error", e)
 
     def slotItemDelete(self):
         """
@@ -310,11 +314,11 @@ class MainWidget(QtGui.QWidget, Ui_MainWidget):
         self.widgetService.setEnabled(False)
         try:
             self.iface.setState(state)
-        except Exception, e:
+        except Exception as e:
             if "Comar.PolicyKit" in e._dbus_error_name:
                 createMessage(self,"Error", "Access denied.")
             else:
-                createMessage(self,"Error", unicode(e))
+                createMessage(self,"Error", e)
         self.widgetService.setEnabled(True)
 
     def slotAnimate(self, frame):

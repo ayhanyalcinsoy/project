@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2009 TUBITAK/UEKAE
+# Forked from Pardus Firewall Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -24,13 +27,13 @@ from firewallmanager.context import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QMainWindow.__init__(self, parent)
         widget = MainWidget(self)
         self.resize(widget.size())
         self.setCentralWidget(widget)
-        self.qtrans=QtCore.QTranslator()
+        self.qtrans=QTranslator()
 if __name__ == "__main__":
 
 
@@ -38,40 +41,23 @@ if __name__ == "__main__":
         from dbus.mainloop.qt import DBusQtMainLoop
         DBusQtMainLoop(set_as_default=True)
 
-    if ctx.Pds.session == ctx.pds.Kde4:
+    import gettext
         
-        #PyKde4
-        from PyKDE4.kdeui import KMainWindow, KApplication, KCModule, KIcon
-        from PyKDE4.kdecore import KCmdLineArgs, KGlobal
-        from firewallmanager.about import aboutData, catalog
-        from firewallmanager.standalone import FirewallManager
-        #Set Commandline arguments
-        KCmdLineArgs.init(sys.argv, aboutData)
-        #Create a Kapplication instance
-        app = KApplication()
-        window = FirewallManager()
-        window.show()
+    __trans = gettext.translation('firewall-manager', fallback=True)
+    i18n = __trans.ugettext
 
-        app.exec_()
-    else:
+    from firewallmanager.main import MainWidget
+    from pds.quniqueapp import QUniqueApplication
 
-        import gettext
-        
-        __trans = gettext.translation('firewall-manager', fallback=True)
-        i18n = __trans.ugettext
+    app = QUniqueApplication(sys.argv, catalog="firewall-manager")
 
-        from firewallmanager.main import MainWidget
-        from pds.quniqueapp import QUniqueApplication
-
-        app = QUniqueApplication(sys.argv, catalog="firewall-manager")
-
-        mainWindow = MainWidget(None)
-        mainWindow.show()
-        mainWindow.resize(640, 480)
-        mainWindow.setWindowTitle(i18n("Firewall Manager"))
-        mainWindow.setWindowIcon(KIcon("security-high"))
-        app.connect(app, SIGNAL('lastWindowClosed()'), app.quit)
-        app.exec_()
+    mainWindow = MainWidget(None)
+    mainWindow.show()
+    mainWindow.resize(640, 480)
+    mainWindow.setWindowTitle(i18n("Firewall Manager"))
+    mainWindow.setWindowIcon(QIcon("security-high"))
+    app.connect(app, pyqtSignal('lastWindowClosed()'), app.quit)
+    app.exec_()
 
 def CreatePlugin(widget_parent, parent, component_data):
     return Module(component_data, parent)

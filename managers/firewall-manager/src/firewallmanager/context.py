@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Forked from Pardus Firewall Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+
 import pds
 import traceback
 from time import time
@@ -11,11 +16,9 @@ from context import *
 Pds = pds.Pds('firewall-manager', debug = True)
 # Force to use Default Session for testing
 #Pds.session = pds.DefaultDe
-print 'Current session is : %s %s' % (Pds.session.Name, Pds.session.Version)
+print('Current session is : %s %s') % (Pds.session.Name, Pds.session.Version)
 
 i18n = Pds.i18n
-KIconLoader = QIconLoader(Pds,forceCache=True)
-KIcon = KIconLoader.icon
 
 time_counter = 0
 start_time = time()

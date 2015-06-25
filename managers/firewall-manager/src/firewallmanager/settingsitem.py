@@ -3,7 +3,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2009 TUBITAK/UEKAE
+# Forked from Pardus Firewall Manager
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
+# 2015 - Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -16,15 +19,16 @@
 # PyQt
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from context import *
-from PyQt5.Qt import pyqtSignal
+
 # UI
 from firewallmanager.ui_settingsitem import Ui_SettingsItemWidget
 
 
-class SettingsItemWidget(QtGui.QWidget, Ui_SettingsItemWidget):
+class SettingsItemWidget(QWidget, Ui_SettingsItemWidget):
     def __init__(self, parent, name, type_):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
 
         self.name = name
@@ -41,16 +45,16 @@ class SettingsItemWidget(QtGui.QWidget, Ui_SettingsItemWidget):
         elif type_ == "text":
             self.lineItem.show()
 
-        self.connect(self.pushAdd, QtCore.SIGNAL("clicked()"), self.addItemToList)
-        self.connect(self.pushDelete, QtCore.SIGNAL("clicked()"), self.removeItemToList)
-        self.connect(self.pushUp, QtCore.SIGNAL("clicked()"), self.funcpushUp)
-        self.connect(self.pushDown, QtCore.SIGNAL("clicked()"), self.funcpushDown)
-        QtCore.QObject.connect(self.listWidget, QtCore.SIGNAL(("currentItemChanged(QListWidgetItem*,QListWidgetItem*)")), self.HideButtons)
-        QtCore.QObject.connect(self.lineEdit, QtCore.SIGNAL(("textChanged(QString)")), self.hideAdd)
-        self.pushAdd.setIcon(KIcon("list-add"))
-        self.pushDelete.setIcon(KIcon("list-remove"))
-        self.pushUp.setIcon(KIcon("arrow-up"))
-        self.pushDown.setIcon(KIcon("arrow-down"))
+        self.connect(self.pushAdd, pyqtSignal("clicked()"), self.addItemToList)
+        self.connect(self.pushDelete, pyqtSignal("clicked()"), self.removeItemToList)
+        self.connect(self.pushUp, pyqtSignal("clicked()"), self.funcpushUp)
+        self.connect(self.pushDown, pyqtSignal("clicked()"), self.funcpushDown)
+        QObject.connect(self.listWidget, pyqtSignal(("currentItemChanged(QListWidgetItem*,QListWidgetItem*)")), self.HideButtons)
+        QObject.connect(self.lineEdit, pyqtSignal(("textChanged(QString)")), self.hideAdd)
+        self.pushAdd.setIcon(QIcon("list-add"))
+        self.pushDelete.setIcon(QIcon("list-remove"))
+        self.pushUp.setIcon(QIcon("arrow-up"))
+        self.pushDown.setIcon(QIcon("arrow-down"))
 
     def setDisabledAll(self):
         self.pushAdd.setEnabled(0)
@@ -135,41 +139,41 @@ class SettingsItemWidget(QtGui.QWidget, Ui_SettingsItemWidget):
         self.listWidget.currentItem().setText(degisken_)
         self.listToLineEdit()
     def setTitle(self, title):
-        self.labelTitle.setText(unicode(title))
+        self.labelTitle.setText(title)
 
     def setOptions(self, options):
         for key, value in options.iteritems():
             if key == "choose" and self.type == "combo":
                 for item in value.split("\n"):
                     name, label = item.split("\t")
-                    self.comboItems.addItem(label, QtCore.QVariant(name))
+                    self.comboItems.addItem(label, QVariant(name))
             elif key == "format" and self.type in ["editlist", "text"]:
                 editor = self.lineEdit
-                validator = QtGui.QRegExpValidator(QtCore.QRegExp(value), self)
+                validator = QRegExpValidator(QRegExp(value), self)
                 editor.setValidator(validator)
 
     def setValue(self, value):
-        value = unicode(value)
+        value = value
         if self.type == "combo":
-            index = self.comboItems.findData(QtCore.QVariant(value))
+            index = self.comboItems.findData(QVariant(value))
             if index == -1:
                 return
             self.comboItems.setCurrentIndex(index)
         elif self.type == "editlist":
             for item in value.split():
-                self.listWidget.insertItem(0,unicode(item))
+                self.listWidget.insertItem(0,item)
         elif self.type == "text":
-            self.lineItem.setText(unicode(value))
+            self.lineItem.setText(value)
 
     def getValue(self):
         if self.type == "combo":
             index = self.comboItems.currentIndex()
-            return unicode(self.comboItems.itemData(index).toString())
+            return self.comboItems.itemData(index).toString()
         elif self.type == "editlist":
             items = []
             for index in range(self.listWidget.count()):
-                items.append(unicode(self.listWidget.item(index).text()))
+                items.append(self.listWidget.item(index).text())
             return " ".join(items)
         elif self.type == "text":
-            return unicode(self.lineItem.text())
+            return self.lineItem.text()
 #endif // SETTINGSITEM.PY
