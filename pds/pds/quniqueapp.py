@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus
+# PisiLinux Desktop Services
+# Copyright (C) 2015, PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -13,17 +15,20 @@
 import sys
 import signal
 
-# PyQt5 Core Libraries
+# PyQt5 Libraries
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.Qt import *
+from PyQt5.QtNetwork import *
+
 
 class QUniqueApplication(QApplication):
 
     def __init__(self, argv, catalog):
         QApplication.__init__(self, argv)
         self.aboutToQuit.connect(self.cleanup)
-        self.control = QtNetwork.QLocalServer(self)
+        self.control = QLocalServer(self)
         self.control.newConnection.connect(self.onControlConnect)
         self.mainwindow = None
         self.catalog = '%s-pds.socket' % catalog
@@ -58,9 +63,9 @@ class QUniqueApplication(QApplication):
         self.control.removeServer(self.catalog)
 
     def sendToInstance(self, data = ''):
-        socket = QtNetwork.QLocalSocket()
+        socket = QLocalSocket()
         socket.connectToServer(self.catalog, QIODevice.WriteOnly)
-        if socket.waitForConnected( 500 ):
+        if socket.waitForConnected(500):
             if len(data) > 0:
                 socket.write(data)
                 socket.flush()
@@ -84,4 +89,3 @@ class QUniqueApplication(QApplication):
         if cmd == 'show-mainwindow':
             if hasattr(self.mainwindow, 'show'):
                 self.mainwindow.show()
-

@@ -20,11 +20,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtXml import *
+from PyQt5.Qt import *
 
-
-class PApplicaitonContainer(Qt.QX11EmbededContainer):
+#QX11EmbededContainer supported no more by qt5
+class PApplicaitonContainer(QWidget):
     def __init__(self, parent = None, process = None, args = ()):
-        Qt.QX11EmbedContainer.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         self._label = None
         self._proc = None
@@ -41,7 +42,7 @@ class PApplicaitonContainer(Qt.QX11EmbededContainer):
         self._process = process
         self._args = args
 
-        self._proc = Qt.QProcess(self)
+        self._proc = QProcess(self)
         self._proc.finished.connect(self._finished)
         self._proc.start(process, args)
 
@@ -65,7 +66,7 @@ class PApplicaitonContainer(Qt.QX11EmbededContainer):
 
     def _showMessage(self, message):
         if not self._label:
-            self._label = Qt.QLabel(self)
+            self._label = QLabel(self)
 
         self._label.setText(message)
         self._label.show()
@@ -73,6 +74,4 @@ class PApplicaitonContainer(Qt.QX11EmbededContainer):
     def isRunning(self):
         if not self._proc:
             return False
-        return not self._proc.state() == Qt.QProcess.NotRunning
-
-
+        return not self._proc.state() == QProcess.NotRunning

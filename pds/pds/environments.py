@@ -4,9 +4,8 @@
 # Pisi Desktop Services
 
 # Forked from Pardus Desktop Services
-# Copyright (C) 2012-2015, PisiLinux
-#Muhammet Dilmaç <iletisim@muhammetdilmac.com.tr>
-#Ayhan Yalçınsoy<ayhanyalcinsoy@pisilinux.org>
+# Copyright (C) 2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -78,15 +77,15 @@ class Enlightenment(DefaultDe):
     DefaultIconTheme     = 'Faenza'
     IconKey              = 'E_ICON_THEME'
 
-class LXDE(DefaultDe):
-    Name                 = 'LXDE'
+class LxQt(DefaultDe):
+    Name                 = 'LxQt'
     Version              = '0.5'
     ConfigPath           = '$HOME/.config'
     ConfigFile           = ''
     ConfigType           = None
-    DefaultIconTheme     = 'Faenza'
+    DefaultIconTheme     = 'Compass'
     IconKey              = 'theme/name'
-    DefaultIconFile      = '/usr/share/lxde/images/pisilinuxLogo.png'
+    DefaultIconFile      = '/usr/share/lxqt/themes/Ambiance/mainmenu.svg'
 
 class Fluxbox(DefaultDe):
     Name                 = 'fluxbox'

@@ -129,7 +129,7 @@ class QPageWidget(QScrollArea):
         self.__scrollBar.setValue(self.__current * self.__base_value())
 
         # Emit currentChanged SIGNAL
-        self.emit(SIGNAL("currentChanged()"))
+        self.emit(pyqtSignal("currentChanged()"))
 
     def event(self, event):
         """ Overrides the main event handler to catch resize events """
@@ -185,9 +185,9 @@ class QPageWidget(QScrollArea):
         self.layout.addWidget(self.__tmp_page.widget)
 
         # Create connections for page navigation signals from new page
-        self.connect(page.widget, SIGNAL("pageNext()"), self.next)
-        self.connect(page.widget, SIGNAL("pagePrevious()"), self.prev)
-        self.connect(page.widget, SIGNAL("setCurrent(int)"), self.setCurrent)
+        self.connect(page.widget, pyqtSignal("pageNext()"), self.next)
+        self.connect(page.widget, pyqtSignal("pagePrevious()"), self.prev)
+        self.connect(page.widget, pyqtSignal("setCurrent(int)"), self.setCurrent)
 
     def __setCurrent(self, pageNumber):
         """ Internal method to set current page index. """

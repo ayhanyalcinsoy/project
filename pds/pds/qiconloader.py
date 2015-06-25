@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus
+# PisiLinux Desktop Services
+# Copyright (C) 2015, PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
 # 2011 - Comak Developers <comak:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy <ayhanyalcinsoy:pisilinux.org>
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -58,10 +60,10 @@ class QIconLoader:
 
         # Get possible Data Directories
         dataDirs = QFile.decodeName(getenv('XDG_DATA_DIRS'))
-        if dataDirs.isspace():    #isEmpty():
-            dataDirs = QString('/usr/local/share/:/usr/share/')
+        if dataDirs.isspace():
+            dataDirs = str('/usr/local/share/:/usr/share/')
 
-        dataDirs.prepend(QDir.homePath() + ":")
+        dataDirs.str(QDir.homePath() + ":") + dataDirs
         dataDirs.prepend(str(self.pds.config_path) + 'share:')
 
         if self.pds.session.ExtraDirs:
@@ -75,7 +77,7 @@ class QIconLoader:
 
         # Define icon directories
         self.iconDirs =  filter(lambda x: path.exists(x),
-                map(lambda x: path.join(unicode(x), 'icons'),
+                map(lambda x: path.join(x, 'icons'),
                     dataDirs.split(':')))
         self.iconDirs = list(set(self.iconDirs))
         logging.debug('Icon Dirs : %s' % ','.join(self.iconDirs))
@@ -94,8 +96,8 @@ class QIconLoader:
 
         # Read theme index files
         for i in range(len(self.iconDirs)):
-            themeIndex.setFileName(path.join(unicode(self.iconDirs[i]), 
-                unicode(themeName), "index.theme"))
+            themeIndex.setFileName(path.join(self.iconDirs[i],
+                themeName), "index.theme")
             if themeIndex.exists():
                 indexReader = QSettings(themeIndex.fileName(), 
                         QSettings.IniFormat)
@@ -103,7 +105,7 @@ class QIconLoader:
                     if key.endsWith("/Size"):
                         size = indexReader.value(key).toInt()
                         dirList.append((size[0], 
-                            unicode(key.left(key.size() - 5))))
+                            key.left(key.size() - 5)))
                 parents = indexReader.value('Icon Theme/Inherits')
                 parents = parents.toStringList()
                 break
