@@ -32,7 +32,7 @@ def isLiveCD():
 def getRelease():
     p = subprocess.Popen(["lsb_release", "-irs"], stdout=subprocess.PIPE)
     release, err = p.communicate()
-    return unicode(release.replace("\n", ""))
+    return str(release.replace("\n", ""))
 
 def killPlasma(self):
     p = subprocess.Popen(["pidof", "-s", "plasma-desktop"], stdout=subprocess.PIPE)
@@ -42,9 +42,9 @@ def killPlasma(self):
     try:
         os.kill(pidOfPlasma, 15)
         self.startPlasma()
-    except OSError, e:
-        print 'WARNING: failed os.kill: %s' % e
-        print "Trying SIGKILL"
+    except OSError as e:
+        print('WARNING: failed os.kill: %s') % e
+        print("Trying SIGKILL")
         os.kill(pidOfPlasma, 9)
         startPlasma()
 

@@ -12,10 +12,8 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
-from PyKDE4.kdecore import ki18n, KConfig, KProcess
-
-from PyKDE4 import kdeui
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrPackage import Ui_packageWidget
@@ -24,12 +22,12 @@ import subprocess
 
 isUpdateOn = False
 
-class Widget(QtGui.QWidget, Screen):
-    title = ki18n("Packages")
-    desc = ki18n("Install / Remove Programs")
+class Widget(QWidget, Screen):
+    title = i18n("Packages")
+    desc = i18n("Install / Remove Programs")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_packageWidget()
         self.ui.setupUi(self)
 
@@ -38,8 +36,8 @@ class Widget(QtGui.QWidget, Screen):
         self.ui.updateInterval.setVisible(False)
 
         # set signals
-        self.ui.showTray.connect(self.ui.showTray, SIGNAL("toggled(bool)"), self.enableCheckTime)
-        self.ui.checkUpdate.connect(self.ui.checkUpdate, SIGNAL("toggled(bool)"), self.updateSelected)
+        self.ui.showTray.connect(self.ui.showTray, pyqtSignal("toggled(bool)"), self.enableCheckTime)
+        self.ui.checkUpdate.connect(self.ui.checkUpdate, pyqtSignal("toggled(bool)"), self.updateSelected)
 
     def enableCheckTime(self):
         if self.ui.showTray.isChecked():

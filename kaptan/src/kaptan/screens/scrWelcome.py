@@ -13,8 +13,7 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyKDE4.kdecore import ki18n
-from PyKDE4.kdecore import i18n
+from PyQt5.QtWidgets import *
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrWelcome import Ui_welcomeWidget
@@ -22,16 +21,16 @@ from kaptan.tools import tools
 
 import subprocess
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
 
-    title = ki18n("Welcome")
-    desc = ki18n("Welcome to %s")
+    title = i18n("Welcome")
+    desc = i18n("Welcome to %s")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_welcomeWidget()
         self.ui.setupUi(self)
-        Widget.desc = QVariant(unicode(Widget.desc.toString()) % tools.getRelease())
+        Widget.desc = QVariant(str(Widget.desc.toString()) % tools.getRelease())
 
     def shown(self):
         pass

@@ -3,6 +3,7 @@
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 class DrawPie(QVector2D):
     def __init__(self, totalPiece, parent=None):

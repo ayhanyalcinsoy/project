@@ -13,24 +13,25 @@
 # Please read the COPYING file.
 #
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
-from PyKDE4.kdecore import ki18n, KConfig, KProcess
+#from PyKDE4.kdecore import ki18n, KConfig, KProcess
 
-from PyKDE4 import kdeui
+#from PyKDE4 import kdeui
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrSearch import Ui_searchWidget
 
 import subprocess
 
-class Widget(QtGui.QWidget, Screen):
-    title = ki18n("Search")
-    desc = ki18n("Enable / Disable Strigi Desktop Search")
+class Widget(QWidget, Screen):
+    #title = ki18n("Search")
+    #desc = ki18n("Enable / Disable Strigi Desktop Search")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_searchWidget()
         self.ui.setupUi(self)
 
@@ -38,7 +39,7 @@ class Widget(QtGui.QWidget, Screen):
         self.ui.checkBoxNepomuk.setChecked(True)
 
         # set signals
-        self.ui.checkBoxNepomuk.connect(self.ui.checkBoxNepomuk, SIGNAL("toggled(bool)"), self.enableSearch)
+        self.ui.checkBoxNepomuk.connect(self.ui.checkBoxNepomuk, pyqtSignal("toggled(bool)"), self.enableSearch)
 
     def enableSearch(self):
         if self.ui.showTray.isChecked():
@@ -56,7 +57,7 @@ class Widget(QtGui.QWidget, Screen):
         #else:
         #    self.ui.updateInterval.setEnabled(False)
         # TODO: Where are Nepomuk/Strigi settings stored?
-        print "This part still needs to be written."
+        print("This part still needs to be written.")
 
     def applySettings(self):
         # write selected configurations to future package-managerrc

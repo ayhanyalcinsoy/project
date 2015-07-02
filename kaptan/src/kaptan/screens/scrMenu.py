@@ -12,22 +12,22 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyKDE4.kdecore import ki18n, KStandardDirs, KGlobal, KConfig
+from PyQt5.QtWidgets import *
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrMenu import Ui_menuWidget
 
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
     screenSettings = {}
     screenSettings["hasChanged"] = False
 
     # Set title and description for the information widget
-    title = ki18n("Menu")
-    desc = ki18n("Choose a Menu Style")
+    title = i18n("Menu")
+    desc = i18n("Choose a Menu Style")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_menuWidget()
         self.ui.setupUi(self)
 
@@ -38,21 +38,21 @@ class Widget(QtGui.QWidget, Screen):
         self.menuNames = {}
         self.menuNames["launcher"] = {
                 "menuIndex": 0,
-                "summaryMessage": ki18n("Kick-off Menu"),
-                "image": QtGui.QPixmap(':/raw/pixmap/kickoff.png'),
-                "description": ki18n("Kick-off menu is the default menu of Pisi Linux.<br><br>The program shortcuts are easy to access and well organized.")
+                "summaryMessage": i18n("Kick-off Menu"),
+                "image": QPixmap(':/raw/pixmap/kickoff.png'),
+                "description": i18n("Kick-off menu is the default menu of Pisi Linux.<br><br>The program shortcuts are easy to access and well organized.")
                 }
         self.menuNames["simplelauncher"] = {
                 "menuIndex": 1,
-                "summaryMessage": ki18n("Simple Menu"),
-                "image": QtGui.QPixmap(':/raw/pixmap/simple.png'),
-                "description": ki18n("Simple menu is an old style menu from KDE 3.<br><br>It is a very lightweight menu thus it is recommended for slower PC's.")
+                "summaryMessage": i18n("Simple Menu"),
+                "image": QPixmap(':/raw/pixmap/simple.png'),
+                "description": i18n("Simple menu is an old style menu from KDE 3.<br><br>It is a very lightweight menu thus it is recommended for slower PC's.")
                 }
         self.menuNames["lancelot_launcher"] = {
                 "menuIndex": 2,
-                "summaryMessage": ki18n("Lancelot Menu"),
-                "image": QtGui.QPixmap(':/raw/pixmap/lancelot.png'),
-                "description": ki18n("Lancelot is an advanced and highly customizable menu for Pisi Linux.<br><br>The program shortcuts are easy to access and well organized.")
+                "summaryMessage": i18n("Lancelot Menu"),
+                "image": QPixmap(':/raw/pixmap/lancelot.png'),
+                "description": i18n("Lancelot is an advanced and highly customizable menu for Pisi Linux.<br><br>The program shortcuts are easy to access and well organized.")
                 }
 
         for each in list(group.groupList()):
@@ -75,7 +75,7 @@ class Widget(QtGui.QWidget, Screen):
         self.ui.labelMenuDescription.setText(self.menuNames[str(self.__class__.screenSettings["selectedMenu"])]["description"].toString())
         self.ui.menuStyles.setCurrentIndex(self.menuNames[str(self.__class__.screenSettings["selectedMenu"])]["menuIndex"])
 
-        self.ui.menuStyles.connect(self.ui.menuStyles, SIGNAL("activated(const QString &)"), self.setMenuStyle)
+        self.ui.menuStyles.connect(self.ui.menuStyles, pyqtSignal("activated(const QString &)"), self.setMenuStyle)
 
     def setMenuStyle(self, enee):
         self.__class__.screenSettings["hasChanged"] = True

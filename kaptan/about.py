@@ -11,22 +11,19 @@
 # Please read the COPYING file.
 #
 
-# PyKDE
-from PyKDE4.kdecore import KAboutData, ki18n
-
 # Application Data
 appName     = "kaptan"
-programName = ki18n("Kaptan")
+programName = i18n("Kaptan")
 modName     = "kaptan"
 version     = "5.1.1"
-description = ki18n("Kaptan")
-license     = KAboutData.License_GPL
-copyright   = ki18n("Pisilinux Community")
-text        = ki18n(" ")
+description = i18n("Kaptan")
+license     = "GPL"
+copyright   = i18n("Pisilinux Community")
+text        = i18n(" ")
 homePage    = "https://github.com/pisilinux/project"
 bugEmail    = "admins@pisilinux.org"
 catalog     = appName
 aboutData   = KAboutData(appName, catalog, programName, version, description, license, copyright, text, homePage, bugEmail)
 
 # Author(s)
-aboutData.addAuthor(ki18n("Pisi Linux Admins"), ki18n("Current Maintainer"))
+aboutData.addAuthor(i18n("Pisi Linux Admins"), i18n("Current Maintainer"))

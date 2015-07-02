@@ -12,10 +12,8 @@
 
 
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QFileDialog
-
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyKDE4.kdecore import ki18n, KStandardDirs, KGlobal, KConfig
 import os, sys, subprocess
 
 from kaptan.screen import Screen
@@ -26,23 +24,23 @@ from kaptan.tools.desktop_parser import DesktopParser
 from ConfigParser import ConfigParser
 
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
     screenSettings = {}
     screenSettings["hasChanged"] = False
 
     # title and description at the top of the dialog window
-    title = ki18n("Wallpaper")
-    desc = ki18n("Choose a Wallpaper")
+    title = i18n("Wallpaper")
+    desc = i18n("Choose a Wallpaper")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_wallpaperWidget()
         self.ui.setupUi(self)
         # Get system locale
         self.catLang = KGlobal.locale().language()
 
         # Get screen resolution
-        rect =  QtGui.QDesktopWidget().screenGeometry()
+        rect =  QDesktopWidget().screenGeometry()
 
         # Get metadata.desktop files from shared wallpaper directory
         lst= KStandardDirs().findAllResources("wallpaper", "*metadata.desktop", KStandardDirs.Recursive)
@@ -82,17 +80,17 @@ class Widget(QtGui.QWidget, Screen):
             wallpaperFile = os.path.split(str(desktopFiles))[0]
 
             # Insert wallpapers to listWidget.
-            item = QtGui.QListWidgetItem(self.ui.listWallpaper)
+            item = QListWidgetItem(self.ui.listWallpaper)
             # Each wallpaper item is a widget. Look at widgets.py for more information.
-            widget = WallpaperItemWidget(unicode(wallpaperTitle), unicode(wallpaperDesc), wallpaperThumb, self.ui.listWallpaper)
+            widget = WallpaperItemWidget(str(wallpaperTitle), str(wallpaperDesc), wallpaperThumb, self.ui.listWallpaper)
             item.setSizeHint(QSize(120,170))
             self.ui.listWallpaper.setItemWidget(item, widget)
             # Add a hidden value to each item for detecting selected wallpaper's path.
             item.setStatusTip(wallpaperFile)
 
-        self.ui.listWallpaper.connect(self.ui.listWallpaper, SIGNAL("itemSelectionChanged()"), self.setWallpaper)
-        self.ui.checkBox.connect(self.ui.checkBox, SIGNAL("stateChanged(int)"), self.disableWidgets)
-        self.ui.buttonChooseWp.connect(self.ui.buttonChooseWp, SIGNAL("clicked()"), self.selectWallpaper)
+        self.ui.listWallpaper.connect(self.ui.listWallpaper, pyqtSignal("itemSelectionChanged()"), self.setWallpaper)
+        self.ui.checkBox.connect(self.ui.checkBox, pyqtSignal("stateChanged(int)"), self.disableWidgets)
+        self.ui.buttonChooseWp.connect(self.ui.buttonChooseWp, pyqtSignal("clicked()"), self.selectWallpaper)
 
     def disableWidgets(self, state):
         if state:
@@ -114,9 +112,9 @@ class Widget(QtGui.QWidget, Screen):
         if selectedFile.isNull():
             return
         else:
-            item = QtGui.QListWidgetItem(self.ui.listWallpaper)
+            item = QListWidgetItem(self.ui.listWallpaper)
             wallpaperName = os.path.splitext(os.path.split(str(selectedFile))[1])[0]
-            widget = WallpaperItemWidget(unicode(wallpaperName), unicode("Unknown"), selectedFile, self.ui.listWallpaper)
+            widget = WallpaperItemWidget(str(wallpaperName), str("Unknown"), selectedFile, self.ui.listWallpaper)
             item.setSizeHint(QSize(120,170))
             self.ui.listWallpaper.setItemWidget(item, widget)
             item.setStatusTip(selectedFile)

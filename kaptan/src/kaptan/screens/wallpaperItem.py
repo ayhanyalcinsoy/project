@@ -13,13 +13,14 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 from kaptan.screens.ui_wallpaperItem import Ui_ServiceItemWidget
 
-class WallpaperItemWidget(QtGui.QWidget):
+class WallpaperItemWidget(QWidget):
 
     def __init__(self, title, desc, pic, parent):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         self.ui = Ui_ServiceItemWidget()
         self.ui.setupUi(self)
@@ -28,6 +29,6 @@ class WallpaperItemWidget(QtGui.QWidget):
         self.ui.labelDesc.setText("by "+ desc)
 
         try:
-            self.ui.labelStatus.setPixmap(QtGui.QPixmap(pic))
+            self.ui.labelStatus.setPixmap(QPixmap(pic))
         except:
             pass

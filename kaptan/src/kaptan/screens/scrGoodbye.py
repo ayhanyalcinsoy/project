@@ -12,7 +12,7 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyKDE4.kdecore import ki18n, KGlobal, KConfig
+from PyQt5.QtWidgets import *
 
 import subprocess, sys
 
@@ -20,12 +20,12 @@ from kaptan.screen import Screen
 from kaptan.screens.ui_scrGoodbye import Ui_goodbyeWidget
 import kaptan.screens.scrSmolt as smoltWidget
 
-class Widget(QtGui.QWidget, Screen):
-    title = ki18n("More")
-    desc = ki18n("Congratulations!")
+class Widget(QWidget, Screen):
+    title = i18n("More")
+    desc = i18n("Congratulations!")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_goodbyeWidget()
         self.ui.setupUi(self)
 

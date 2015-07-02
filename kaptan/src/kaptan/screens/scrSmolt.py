@@ -15,8 +15,8 @@ import pardus.netutils
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
-from PyKDE4 import kdecore
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrSmolt import Ui_smoltWidget
 
@@ -24,7 +24,7 @@ sys.path.append('/usr/share/smolt/client')
 
 import smolt
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
     screenSettings = {}
     screenSettings["profileSend"] = False
 
@@ -32,7 +32,7 @@ class Widget(QtGui.QWidget, Screen):
     desc = kdecore.ki18n("Help Pisi Linux Improve!")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_smoltWidget()
         self.ui.setupUi(self)
 
@@ -52,11 +52,11 @@ class Widget(QtGui.QWidget, Screen):
         for label, value in self.profile.hostIter():
             self.ui.tableWidget.insertRow(row)
 
-            labelItem = QtGui.QTableWidgetItem(labels[row])
+            labelItem = QTableWidgetItem(labels[row])
             self.setRowColor(self.ui.tableWidget, labelItem)
             self.ui.tableWidget.setItem(row, 0, labelItem)
 
-            dataItem = QtGui.QTableWidgetItem(str(value))
+            dataItem = QTableWidgetItem(str(value))
             self.setRowColor(self.ui.tableWidget, dataItem)
             self.ui.tableWidget.setItem(row, 1, dataItem)
 
@@ -67,25 +67,25 @@ class Widget(QtGui.QWidget, Screen):
 
         colLabel = kdecore.ki18n("Label").toString()
         colData = kdecore.ki18n("Data").toString()
-        item = QtGui.QTableWidgetItem(colLabel)
+        item = QTableWidgetItem(colLabel)
         self.ui.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtGui.QTableWidgetItem(colData)
+        item = QTableWidgetItem(colData)
         self.ui.tableWidget.setHorizontalHeaderItem(1, item)
 
         #self.ui.tableWidget.setHorizontalHeaderLabels(labels)
-        self.ui.tableWidget.horizontalHeader().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        self.ui.tableWidget.horizontalHeader().setResizeMode(1, QtGui.QHeaderView.Stretch)
+        self.ui.tableWidget.horizontalHeader().setResizeMode(0, QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setResizeMode(1, QHeaderView.Stretch)
 
         self.ui.tableWidget.verticalHeader().hide()
         self.ui.tableWidget.setShowGrid(False)
         self.ui.tableWidget.setSortingEnabled(False)
-        self.ui.tableWidget.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.ui.tableWidget.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.ui.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
         self.ui.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
 
     def actions(self):
-        QtCore.QObject.connect(self.ui.privacyButton, QtCore.SIGNAL("clicked()"), self.changePage)
-        QtCore.QObject.connect(self.ui.checkBox, QtCore.SIGNAL("stateChanged(int)"), self.activateSend)
+        QObject.connect(self.ui.privacyButton, pyqtSignal("clicked()"), self.changePage)
+        QObject.connect(self.ui.checkBox, pyqtSignal("stateChanged(int)"), self.activateSend)
 
     def activateSend(self, state):
         if state:
@@ -97,9 +97,9 @@ class Widget(QtGui.QWidget, Screen):
         ''' Set row background to two colors consecutively like KTableWidget does '''
 
         if widget.rowCount() % 2 == 0:
-            tableItem.setBackgroundColor(QtGui.QColor('#e1e1e1')) #Light gray
+            tableItem.setBackgroundColor(QColor('#e1e1e1')) #Light gray
         else:
-            tableItem.setBackgroundColor(QtGui.QColor('#ffffff')) # White
+            tableItem.setBackgroundColor(QColor('#ffffff')) # White
 
     def changePage(self):
 

@@ -17,9 +17,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyKDE4.kdecore import ki18n
-from PyKDE4.kdecore import i18n
-import ImageQt
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrAvatar import Ui_Form
@@ -31,21 +28,21 @@ import Image
 import select
 import v4l2capture
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
 
-    title = ki18n("User Picture")
+    #title = ki18n("User Picture")
 
     screenSettings = {}
     screenSettings["hasChanged"] = False
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self, None)
+        QWidget.__init__(self, None)
         self.ui = Ui_Form()
         self.ui.setupUi(self)
 
         self.camActive = False
 
-        Widget.desc = QVariant(unicode(ki18n("Create Your User Picture").toString()))
+        Widget.desc = QVariant(str(i18n("Create Your User Picture").toString()))
 
         self.pictureTaken = 0
         self.ui.takeButton.hide()
@@ -61,11 +58,11 @@ class Widget(QtGui.QWidget, Screen):
                         continue
                     self.ui.comboBox.addItem(cam_str, QVariant(os.path.join("/dev", dev)))
 
-        self.timer = QtCore.QTimer(self)
-        self.connect(self.timer, QtCore.SIGNAL("timeout()"), self.refreshCam)
-        self.connect(self.ui.comboBox, QtCore.SIGNAL('activated(QString)'), self.processSelection)
-        self.connect(self.ui.takeButton, QtCore.SIGNAL('clicked()'), self.showPicture)
-        self.connect(self.ui.takeAgainButton, QtCore.SIGNAL('clicked()'), self.activateCam)
+        self.timer = QTimer(self)
+        self.connect(self.timer, pyqtSignal("timeout()"), self.refreshCam)
+        self.connect(self.ui.comboBox, pyqtSignal('activated(QString)'), self.processSelection)
+        self.connect(self.ui.takeButton, pyqtSignal('clicked()'), self.showPicture)
+        self.connect(self.ui.takeAgainButton, pyqtSignal('clicked()'), self.activateCam)
 
         self.ui.takeAgainButton.hide()
 
@@ -100,7 +97,7 @@ class Widget(QtGui.QWidget, Screen):
             self.image_data = self.video.read_and_queue()
             self.image_raw = Image.fromstring("RGB", (self.size_x, self.size_y), self.image_data)
             self.image = ImageQt.ImageQt(self.image_raw).mirrored(True, False)
-            self.ui.camGoruntu.setPixmap(QtGui.QPixmap.fromImage(self.image))
+            self.ui.camGoruntu.setPixmap(QPixmap.fromImage(self.image))
             self.updateCropMask()
         except:
             pass
@@ -147,7 +144,7 @@ class Widget(QtGui.QWidget, Screen):
         else:
             home = os.path.expanduser("~")
 
-        self.ui.camGoruntu.setPixmap(QtGui.QPixmap(str(self.selectedFile)))
+        self.ui.camGoruntu.setPixmap(QPixmap(str(self.selectedFile)))
         self.ui.camGoruntu.update()
 
         self.savePicture(self.selectedFile)
@@ -166,10 +163,10 @@ class Widget(QtGui.QWidget, Screen):
         return True
 
 
-class DrawCropMask(QtGui.QWidget):
+class DrawCropMask(QWidget):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.setGeometry(QtCore.QRect(0, 0, 320, 240))
+        QWidget.__init__(self, parent)
+        self.setGeometry(QRect(0, 0, 320, 240))
 
     def paintEvent(self, event):
         painter = QPainter()

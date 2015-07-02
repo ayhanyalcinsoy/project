@@ -14,19 +14,20 @@
 # Qt Stuff
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 # Application Stuff
 from kaptan.screens.ui_scrStyleItem import Ui_StyleItemWidget
 
-class StyleItemWidget(QtGui.QWidget):
+class StyleItemWidget(QWidget):
 
     def __init__(self, title, desc, pic, parent):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         self.ui = Ui_StyleItemWidget()
         self.ui.setupUi(self)
 
         self.ui.styleName.setText(title)
         self.ui.styleDesc.setText(desc)
-        self.ui.stylePreview.setPixmap(QtGui.QPixmap(pic))
+        self.ui.stylePreview.setPixmap(QPixmap(pic))
 

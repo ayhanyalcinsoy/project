@@ -13,7 +13,7 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyKDE4.kdecore import ki18n, KConfig
+from PyQt5.QtWidgets import *
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrKeyboard import Ui_keyboardWidget
@@ -22,16 +22,16 @@ import subprocess
 
 from pardus import localedata
 
-class Widget(QtGui.QWidget, Screen):
+class Widget(QWidget, Screen):
     screenSettings = {}
     screenSettings["hasChanged"] = False
 
     # title and description at the top of the dialog window
-    title = ki18n("Keyboard")
-    desc = ki18n("Keyboard Layout Language")
+    title = i18n("Keyboard")
+    desc = i18n("Keyboard Layout Language")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_keyboardWidget()
         self.ui.setupUi(self)
 
@@ -48,7 +48,7 @@ class Widget(QtGui.QWidget, Screen):
         for language in self.languageList:
             languageCode, languageName, languageLayout, languageVariant = language
 
-            item = QtGui.QListWidgetItem(self.ui.listWidgetKeyboard)
+            item = QListWidgetItem(self.ui.listWidgetKeyboard)
             item.setText(languageName)
             item.setToolTip(languageLayout)
             item.setStatusTip(languageVariant)
@@ -62,7 +62,7 @@ class Widget(QtGui.QWidget, Screen):
                     self.ui.listWidgetKeyboard.setCurrentItem(item)
 
         self.ui.listWidgetKeyboard.sortItems()
-        self.ui.listWidgetKeyboard.connect(self.ui.listWidgetKeyboard, SIGNAL("itemSelectionChanged()"), self.setKeyboard)
+        self.ui.listWidgetKeyboard.connect(self.ui.listWidgetKeyboard, pyqtSignal("itemSelectionChanged()"), self.setKeyboard)
 
     def getCurrentSystemLanguage(self):
         lang = "en"
@@ -71,7 +71,7 @@ class Widget(QtGui.QWidget, Screen):
             langFile = open('/etc/mudur/language', 'r')
             lang = langFile.readline().rstrip('\n').strip()
         except IOError:
-            print "Cannot read /etc/mudur/language file"
+            print("Cannot read /etc/mudur/language file")
 
         return lang
 

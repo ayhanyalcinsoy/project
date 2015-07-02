@@ -31,7 +31,7 @@ def update_messages():
 
     # Collect UI files
     for filename in glob.glob1("ui", "*.ui"):
-        os.system("pykde4uic -o .tmp/%s.py ui/%s" % (filename.split(".")[0], filename))
+        os.system("pyuic5 -o .tmp/%s.py ui/%s" % (filename.split(".")[0], filename))
 
     # Collect Python files
     directories = [ "src/kaptan",
@@ -79,22 +79,22 @@ class Build(build):
         # Clear all
         os.system("rm -rf build")
         # Copy codes
-        print "Copying PYs..."
+        print("Copying PYs...")
         os.system("cp -R src build/")
 
         # Copy kde-themes
-        print "Copying kde-themes..."
+        print("Copying kde-themes...")
         os.system("cp -R data/kde-themes build/kaptan/")
 
         #update_messages()
 
         # Copy compiled UIs and RCs
-        print "Generating UIs..."
+        print("Generating UIs...")
         for filename in glob.glob1("ui", "*.ui"):
-            os.system("pykde4uic -o build/kaptan/screens/%s.py ui/%s" % (filename.split(".")[0], filename))
-        print "Generating RCs..."
+            os.system("pyuic5 -o build/kaptan/screens/%s.py ui/%s" % (filename.split(".")[0], filename))
+        print("Generating RCs...")
         for filename in glob.glob1("data", "*.qrc"):
-            os.system("pyrcc4 data/%s -o build/kaptan/%s_rc.py" % (filename, filename.split(".")[0]))
+            os.system("pyrcc5 data/%s -o build/kaptan/%s_rc.py" % (filename, filename.split(".")[0]))
 
         os.system("sed -i 's/kaptan_rc/kaptan.\kaptan_rc/g' build/kaptan/screens/ui_*")
 
@@ -111,7 +111,7 @@ class Install(install):
         project_dir = os.path.join(kde_dir, "share/kde4/apps", about.appName)
 
         # Make directories
-        print "Making directories..."
+        print("Making directories...")
         makeDirs(bin_dir)
 
         #makeDirs(locale_dir)
@@ -119,7 +119,7 @@ class Install(install):
         makeDirs(project_dir)
 
         # Install desktop files
-        print "Installing desktop files..."
+        print("Installing desktop files...")
 
         for filename in glob.glob("data/*.desktop.in"):
             os.system("intltool-merge -d po %s %s" % (filename, filename[:-3]))
@@ -128,11 +128,11 @@ class Install(install):
             shutil.copy("data/%s" % filename, autostart_dir)
 
         # Install codes
-        print "Installing codes..."
+        print("Installing codes...")
         os.system("cp -R build/* %s/" % project_dir)
 
         # Install locales
-        print "Installing locales..."
+        print("Installing locales...")
         for filename in glob.glob1("po", "*.po"):
             lang = filename.rsplit(".", 1)[0]
             os.system("msgfmt po/%s.po -o po/%s.mo" % (lang, lang))
@@ -142,11 +142,11 @@ class Install(install):
                 pass
             shutil.copy("po/%s.mo" % lang, os.path.join(locale_dir, "%s/LC_MESSAGES" % lang, "%s.mo" % about.catalog))
         # Rename
-        print "Renaming application.py..."
+        print("Renaming application.py...")
         #shutil.move(os.path.join(project_dir, "application.py"), os.path.join(project_dir, "%s.py" % about.appName))
         # Modes
-        print "Changing file modes..."
-        os.chmod(os.path.join(project_dir, "%s.py" % about.appName), 0755)
+        print("Changing file modes...")
+        os.chmod(os.path.join(project_dir, "%s.py" % about.appName), 0o755)
         # Symlink
         try:
             if self.root:

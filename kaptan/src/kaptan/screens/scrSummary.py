@@ -12,14 +12,12 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QMessageBox
-from PyKDE4.kdecore import ki18n, KConfig
+from PyQt5.QtWidgets import *
 
 import subprocess,os, dbus
 
 from kaptan.screen import Screen
 from kaptan.screens.ui_scrSummary import Ui_summaryWidget
-from PyKDE4 import kdeui
 
 # import other widgets to get the latest configuration
 import kaptan.screens.scrWallpaper as wallpaperWidget
@@ -31,12 +29,12 @@ import kaptan.screens.scrAvatar  as avatarWidget
 
 from kaptan.tools import tools
 
-class Widget(QtGui.QWidget, Screen):
-    title = ki18n("Summary")
-    desc = ki18n("Save Your Settings")
+class Widget(QWidget, Screen):
+    title = i18n("Summary")
+    desc = i18n("Save Your Settings")
 
     def __init__(self, *args):
-        QtGui.QWidget.__init__(self,None)
+        QWidget.__init__(self,None)
         self.ui = Ui_summaryWidget()
         self.ui.setupUi(self)
 
@@ -51,49 +49,49 @@ class Widget(QtGui.QWidget, Screen):
         subject = "<p><li><b>%s</b></li><ul>"
         item    = "<li>%s</li>"
         end     = "</ul></p>"
-        content = QString("")
+        content = str("")
 
         content.append("""<html><body><ul>""")
 
         # Mouse Settings
-        content.append(subject % ki18n("Mouse Settings").toString())
+        content.append(subject % i18n("Mouse Settings").toString())
 
-        content.append(item % ki18n("Selected Mouse configuration: <b>%s</b>").toString() % self.mouseSettings["summaryMessage"]["selectedMouse"].toString())
-        content.append(item % ki18n("Selected clicking behaviour: <b>%s</b>").toString() % self.mouseSettings["summaryMessage"]["clickBehaviour"].toString())
+        content.append(item % i18n("Selected Mouse configuration: <b>%s</b>").toString() % self.mouseSettings["summaryMessage"]["selectedMouse"].toString())
+        content.append(item % i18n("Selected clicking behaviour: <b>%s</b>").toString() % self.mouseSettings["summaryMessage"]["clickBehaviour"].toString())
         content.append(end)
 
         # Menu Settings
-        content.append(subject % ki18n("Menu Settings").toString())
-        content.append(item % ki18n("Selected Menu: <b>%s</b>").toString() % self.menuSettings["summaryMessage"].toString())
+        content.append(subject % i18n("Menu Settings").toString())
+        content.append(item % i18n("Selected Menu: <b>%s</b>").toString() % self.menuSettings["summaryMessage"].toString())
         content.append(end)
 
         # Wallpaper Settings
-        content.append(subject % ki18n("Wallpaper Settings").toString())
+        content.append(subject % i18n("Wallpaper Settings").toString())
         if not self.wallpaperSettings["hasChanged"]:
-            content.append(item % ki18n("You haven't selected any wallpaper.").toString())
+            content.append(item % i18n("You haven't selected any wallpaper.").toString())
         else:
-            content.append(item % ki18n("Selected Wallpaper: <b>%s</b>").toString() % os.path.basename(str(self.wallpaperSettings["selectedWallpaper"])))
+            content.append(item % i18n("Selected Wallpaper: <b>%s</b>").toString() % os.path.basename(str(self.wallpaperSettings["selectedWallpaper"])))
         content.append(end)
 
         # Style Settings
-        content.append(subject % ki18n("Style Settings").toString())
+        content.append(subject % i18n("Style Settings").toString())
 
         if not self.styleSettings["hasChanged"]:
-            content.append(item % ki18n("You haven't selected any style.").toString())
+            content.append(item % i18n("You haven't selected any style.").toString())
         else:
-            content.append(item % ki18n("Selected Style: <b>%s</b>").toString() % unicode(self.styleSettings["summaryMessage"]))
+            content.append(item % i18n("Selected Style: <b>%s</b>").toString() % str(self.styleSettings["summaryMessage"]))
 
         content.append(end)
 
         # Smolt Settings
         try:
             if self.smoltSettings["summaryMessage"]:
-                content.append(subject %ki18n("Smolt Settings").toString())
-                content.append(item % ki18n("Send my profile: <b>%s</b>").toString() % self.smoltSettings["summaryMessage"])
+                content.append(subject %i18n("Smolt Settings").toString())
+                content.append(item % i18n("Send my profile: <b>%s</b>").toString() % self.smoltSettings["summaryMessage"])
                 #content.append(ki18n("(<i><u>Warning:</u> Sending profile requires to set up communication with Smolt server and can take between 30 seconds to a minute. Kaptan may freeze during this time.</i>)").toString())
                 content.append(end)
         except:
-            print "WARNING: Your Smolt profile is already sent."
+            print("WARNING: Your Smolt profile is already sent.")
 
         content.append("""</ul></body></html>""")
         self.ui.textSummary.setHtml(content)
@@ -106,17 +104,17 @@ class Widget(QtGui.QWidget, Screen):
 
             try:
                 os.kill(pidOfPlasma, 15)
-            except OSError, e:
-                print 'WARNING: failed os.kill: %s' % e
-                print "Trying SIGKILL"
+            except OSError as e:
+                print('WARNING: failed os.kill: %s') % e
+                print("Trying SIGKILL")
                 os.kill(pidOfPlasma, 9)
 
             finally:
                 self.startPlasma()
         except:
-            QMessageBox.critical(self, ki18n("Error").toString(), ki18n("Cannot restart plasma-desktop. Kaptan will now shutdown.").toString())
-            from PyKDE4 import kdeui
-            kdeui.KApplication.kApplication().quit()
+            QMessageBox.critical(self, i18n("Error").toString(), i18n("Cannot restart plasma-desktop. Kaptan will now shutdown.").toString())
+            #from PyKDE4 import kdeui
+            #kdeui.KApplication.kApplication().quit()
 
     def startPlasma(self):
         p = subprocess.Popen(["plasma-desktop"], stdout=subprocess.PIPE)
@@ -211,7 +209,7 @@ class Widget(QtGui.QWidget, Screen):
             group.writeEntry('Number', self.styleSettings["desktopNumber"])
             group.sync()
 
-            info =  kdeui.NETRootInfo(QtGui.QX11Info.display(), kdeui.NET.NumberOfDesktops | kdeui.NET.DesktopNames)
+            info =  kdeui.NETRootInfo(QX11Info.display(), kdeui.NET.NumberOfDesktops | kdeui.NET.DesktopNames)
             info.setNumberOfDesktops(int(self.styleSettings["desktopNumber"]))
             info.activate()
 
@@ -257,7 +255,7 @@ class Widget(QtGui.QWidget, Screen):
                 hasChanged = True
                 configKdeGlobals = KConfig("kdeglobals")
                 group = configKdeGlobals.group("General")
-                group.writeEntry("widgetStyle", self.styleSettings["styleDetails"][unicode(self.styleSettings["styleName"])]["widgetStyle"])
+                group.writeEntry("widgetStyle", self.styleSettings["styleDetails"][str(self.styleSettings["styleName"])]["widgetStyle"])
 
                 groupIconTheme = configKdeGlobals.group("Icons")
                 groupIconTheme.writeEntry("Theme", self.styleSettings["iconTheme"])
@@ -274,7 +272,7 @@ class Widget(QtGui.QWidget, Screen):
                     kdeui.KGlobalSettings.self().emitChange(kdeui.KGlobalSettings.IconChanged, i)
 
                 # Change widget style & color
-                for key, value in self.styleSettings["styleDetails"][unicode(self.styleSettings["styleName"])]["colorScheme"].items():
+                for key, value in self.styleSettings["styleDetails"][str(self.styleSettings["styleName"])]["colorScheme"].items():
                     colorGroup = configKdeGlobals.group(key)
                     for key2, value2 in value.items():
                             colorGroup.writeEntry(str(key2), str(value2))
@@ -284,7 +282,7 @@ class Widget(QtGui.QWidget, Screen):
 
                 configPlasmaRc = KConfig("plasmarc")
                 groupDesktopTheme = configPlasmaRc.group("Theme")
-                groupDesktopTheme.writeEntry("name", self.styleSettings["styleDetails"][unicode(self.styleSettings["styleName"])]["desktopTheme"])
+                groupDesktopTheme.writeEntry("name", self.styleSettings["styleDetails"][str(self.styleSettings["styleName"])]["desktopTheme"])
                 configPlasmaRc.sync()
 
                 configPlasmaApplet = KConfig("plasma-desktop-appletsrc")
@@ -294,13 +292,13 @@ class Widget(QtGui.QWidget, Screen):
                     subcomponent = subgroup.readEntry('plugin')
                     if subcomponent == 'panel':
                         #print subcomponent
-                        subgroup.writeEntry('location', self.styleSettings["styleDetails"][unicode(self.styleSettings["styleName"])]["panelPosition"])
+                        subgroup.writeEntry('location', self.styleSettings["styleDetails"][str(self.styleSettings["styleName"])]["panelPosition"])
 
                 configPlasmaApplet.sync()
 
                 configKwinRc = KConfig("kwinrc")
                 groupWindowDecoration = configKwinRc.group("Style")
-                groupWindowDecoration.writeEntry("PluginLib", self.styleSettings["styleDetails"][unicode(self.styleSettings["styleName"])]["windowDecoration"])
+                groupWindowDecoration.writeEntry("PluginLib", self.styleSettings["styleDetails"][str(self.styleSettings["styleName"])]["windowDecoration"])
                 configKwinRc.sync()
 
             session = dbus.SessionBus()

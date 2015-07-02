@@ -6,20 +6,17 @@ import os
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyKDE4 import kdeui
 from PyQt5.QtGui import *
 from PyQt5.Qt import *
-from PyKDE4.kdecore import ki18n, KAboutData, KCmdLineArgs, KConfig
 
 from kaptan.screens.ui_kaptan import Ui_kaptan
-
 from kaptan.tools import tools
 from kaptan.tools.progress_pie import DrawPie
 from kaptan.tools.kaptan_menu import Menu
 
 class Kaptan(QWidget):
     def __init__(self, parent = None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.initializeGlobals()
         self.initializeUI()
         self.signalHandler()
@@ -38,11 +35,11 @@ class Kaptan(QWidget):
 
     def signalHandler(self):
         ''' connects signals to slots '''
-        self.connect(self.ui.buttonNext, QtCore.pyqtSignal("clicked()"), self.slotNext)
-        self.connect(self.ui.buttonApply, QtCore.pyqtSignal("clicked()"), self.slotNext)
-        self.connect(self.ui.buttonBack, QtCore.pyqtSignal("clicked()"), self.slotBack)
-        self.connect(self.ui.buttonFinish, QtCore.pyqtSignal("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
-        self.connect(self.ui.buttonCancel, QtCore.pyqtSignal("clicked()"), QtGui.qApp, QtCore.SLOT("quit()"))
+        self.connect(self.ui.buttonNext, pyqtSignal("clicked()"), self.slotNext)
+        self.connect(self.ui.buttonApply, pyqtSignal("clicked()"), self.slotNext)
+        self.connect(self.ui.buttonBack, pyqtSignal("clicked()"), self.slotBack)
+        self.connect(self.ui.buttonFinish, pyqtSignal("clicked()"), qApp, pyqtSlot("quit()"))
+        self.connect(self.ui.buttonCancel, pyqtSignal("clicked()"), qApp, pyqtSlot("quit()"))
 
     def initializeUI(self):
         ''' initializes the human interface '''
@@ -221,12 +218,12 @@ class Kaptan(QWidget):
 if __name__ == "__main__":
     appName     = "kaptan"
     catalog     = ""
-    programName = ki18n("kaptan")
+    programName = i18n("kaptan")
     version     = "5.0.1"
-    description = ki18n("Kaptan lets you configure your Pisi Linux workspace at first login")
+    description = i18n("Kaptan lets you configure your Pisi Linux workspace at first login")
     license     = KAboutData.License_GPL
-    copyright   = ki18n("(c) 2013 Pisi Linux")
-    text        = ki18n("none")
+    copyright   = i18n("(c) 2013 Pisi Linux")
+    text        = i18n("none")
     homePage    = "http://www.pisilinux.org/"
     bugEmail    = "admins@pisilinux.org"
 
