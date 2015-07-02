@@ -1,4 +1,4 @@
-Module 'pardus.strutils'
+Module 'pisilinux.strutils'
 ----------------------------------------
 string/list/functional utility functions
 
@@ -32,7 +32,7 @@ unzip (seq)
 
 
 
-Module 'pardus.dirutils'
+Module 'pisilinux.dirutils'
 ----------------------------------------
 dirutils module provides basic directory functions.
 
@@ -44,7 +44,7 @@ Remove all content of a directory.
 
 
 
-Module 'pardus.sysutils'
+Module 'pisilinux.sysutils'
 ----------------------------------------
 sysutils module provides basic system utilities.
 
@@ -55,17 +55,17 @@ getKernelOption (option)
 Get a dictionary of args for the given kernel command line option
 
 
-Module 'pardus.xorg'
+Module 'pisilinux.xorg'
 ----------------------------------------
 None
 
-Module 'pardus.xorg.capslock'
+Module 'pisilinux.xorg.capslock'
 ----------------------------------------
 None
 
 
 
-Module 'pardus.xorg.xterm'
+Module 'pisilinux.xorg.xterm'
 ----------------------------------------
 None
 
@@ -79,7 +79,7 @@ Set message as console window title.
 
 
 
-Module 'pardus.fileutils'
+Module 'pisilinux.fileutils'
 ----------------------------------------
 sysutils module provides basic file I/0 utility functions.
 
@@ -88,7 +88,7 @@ Update file modification date, create file if necessary
 
 
 
-Module 'pardus.procutils'
+Module 'pisilinux.procutils'
 ----------------------------------------
 procutils module provides basic process utilities.
 

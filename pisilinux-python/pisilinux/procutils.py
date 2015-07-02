@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -22,7 +24,7 @@ def capture(*cmd):
 
 def run(*cmd):
     """Run a command without running a shell, only output errors"""
-    f = file("/dev/null", "w")
+    f = open("/dev/null", "w")
     return subprocess.call(cmd, stdout=f)
 
 def run_full(*cmd):
@@ -31,6 +33,6 @@ def run_full(*cmd):
 
 def run_quiet(*cmd):
     """Run the command without running a shell and no output"""
-    f = file("/dev/null", "w")
+    f = open("/dev/null", "w")
     return subprocess.call(cmd, stdout=f, stderr=f)
 

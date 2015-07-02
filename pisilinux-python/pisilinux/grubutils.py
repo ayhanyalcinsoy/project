@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -113,7 +115,7 @@ class grubConf:
         option = True
         entry = None
 
-        for line in file(filename):
+        for line in open(filename):
             if not line.strip() or line.startswith("#"):
                 continue
             key, value, opts = self.__parseLine(line)
@@ -138,7 +140,7 @@ class grubConf:
         default = os.path.join(os.path.dirname(filename), "default")
         if os.path.exists(default):
             try:
-                self.index = int(file(default).read().split("\0")[0])
+                self.index = int(open(default).read().split("\0")[0])
             except ValueError:
                 self.index = 0
 
@@ -153,7 +155,7 @@ class grubConf:
                 conf.append("# %s" % h)
             conf.append("")
         if self.options:
-            for key, value in self.options.iteritems():
+            for key, value in self.options.items():
                 line = "%s %s" % (key, value)
                 conf.append(line)
             conf.append("")
@@ -166,7 +168,7 @@ class grubConf:
 
     def write(self, filename):
         """Writes grub configuration to file."""
-        file(filename, "w").write(str(self))
+        open(filename, "w").write(str(self))
 
     def listOptions(self):
         """Returns list of options."""

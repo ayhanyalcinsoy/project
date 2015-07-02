@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -18,13 +20,13 @@ sysfs_path = "/sys"
 
 def sysValue(*paths):
     path = os.path.join(sysfs_path, *paths)
-    f = file(path)
+    f = open(path)
     data = f.read().rstrip("\n")
     f.close()
     return data
 
 def idsQuery(name, vendor, device):
-    f = file(name)
+    f = open(name)
     flag = 0
     company = ""
     for line in f.readlines():

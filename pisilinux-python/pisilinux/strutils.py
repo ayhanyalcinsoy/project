@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -16,17 +18,17 @@ import operator
 import string
 
 def every(pred, seq):
-    return reduce(operator.and_, map(pred, seq), True)
+    return pred.reduce(operator.and_, map(pred, seq), True)
 
 def any(pred, seq):
-    return reduce(operator.or_, map(pred, seq), False)
+    return pred.reduce(operator.or_, map(pred, seq), False)
 
 def unzip(seq):
     return zip(*seq)
 
 def concat(l):
     """Concatenate a list of lists."""
-    return reduce( operator.concat, l )
+    return l.__reduce__(operator.concat, l )
 
 def strlist(l):
     """Concatenate string reps of l's elements."""

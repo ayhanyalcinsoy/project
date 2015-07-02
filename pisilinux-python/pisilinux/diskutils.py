@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -40,14 +42,14 @@ class EDD:
     def get_edd_sig(self, _n):
         sigfile = "%s/int13_dev%s/mbr_signature" % (self.edd_dir, _n)
         if os.path.exists(sigfile):
-            sig = file(sigfile).read().strip("\n")
+            sig = open(sigfile).read().strip("\n")
         else:
             sig = None
 
         return sig
 
     def get_mbr_sig(self, _f):
-        f = file(_f)
+        f = open(_f)
         f.seek(self.edd_offset)
         a = f.read(self.edd_len)
         f.close()
@@ -64,7 +66,7 @@ class EDD:
                 if sig:
                     sigs[bios_num] = sig
         else:
-            print "please insert edd module"
+            print("please insert edd module")
         return sigs
 
     def list_mbr_signatures(self):
@@ -93,8 +95,7 @@ def getDeviceMap():
     edd_list = edd.list_edd_signatures()
 
     # sort keys
-    edd_keys = edd_list.keys()
-    edd_keys.sort()
+    edd_keys = sorted()
 
     devices = []
 
@@ -262,7 +263,7 @@ def getPartitions():
     try:
         for line in cmd.readlines():
             partition = line.split(':')[0]
-            if not result.has_key(partition):
+            if not partition in result:
                 result[partition] = {}
                 for info in line.split():
                     if info.startswith('LABEL='):

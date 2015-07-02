@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006, TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,34 +23,34 @@ import re
 def print_functions(m):
     for f in inspect.getmembers(m, inspect.isfunction):
 
-        print f[0],
+        print(f[0]),
         args = inspect.getargspec(f[1])[0]
         if args:
-            print "(" + ",".join(args) + ")"
+            print("(" + ",".join(args) + ")")
         else:
-            print "()"
+            print("()")
 
         doc = inspect.getdoc(f[1])
         if doc:
-            print doc
-        print
+            print(doc)
+        print()
 
 def print_modules(modules):
     for m in modules:
-        s = `m`
+        s = 'm'
         r = re.compile("module '.*' from").search(s)
-        print s[r.start():r.end()][:-5].capitalize()
-        print "-"*40
-        print m.__doc__
-        print
+        print(s[r.start():r.end()][:-5].capitalize())
+        print("-"*40)
+        print(m.__doc__)
+        print()
 
         pkg_modules = [x[1] for x in inspect.getmembers(m, inspect.ismodule)
-                       if "site-packages/pisilinux" in `x[1]` and x[0]]
+                       if "site-packages/pisilinux" in 'x[1]' and x[0]]
         print_modules(pkg_modules)
 
         print_functions(m)
-        print
-        print
+        print()
+        print()
 
 if __name__ == "__main__":
     modules = []

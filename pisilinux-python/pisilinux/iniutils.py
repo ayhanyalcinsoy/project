@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -18,7 +20,7 @@ import ConfigParser
 from pisilinux.fileutils import FileLock
 
 class iniDB:
-    def __init__(self, db_file, db_mode=0600):
+    def __init__(self, db_file, db_mode=0o600):
         try:
             os.makedirs(os.path.dirname(db_file))
         except OSError:
@@ -26,7 +28,7 @@ class iniDB:
         self.db_file = db_file
         if not os.path.exists(db_file):
             self.__writelock()
-            file(db_file, "w").close()
+            open(db_file, "w").close()
             os.chmod(db_file, db_mode)
             self.__unlock()
         self.__readlock()
@@ -34,7 +36,7 @@ class iniDB:
         try:
             self.cp.read(db_file)
         except:
-            print "Network configuration file %s is corrupt" % db_file
+            print("Network configuration file %s is corrupt") % db_file
         self.__unlock()
 
     def __writelock(self):
@@ -73,7 +75,7 @@ class iniDB:
         for nm in db.listDB():
             if nm == name:
                 continue
-            for key, value in db.getDB(nm).iteritems():
+            for key, value in db.getDB(nm).items():
                 self.cp.set(nm, key, value)
         self.__writelock()
         fp = open(self.db_file, "w")
@@ -107,7 +109,7 @@ class iniParser:
 
     """
 
-    def __init__(self, inifile, chmod=0600, quiet=False):
+    def __init__(self, inifile, chmod=0o600, quiet=False):
         """
             Constuctor. Creates INI file if it doesn't exist and sets file mode.
         """
@@ -175,7 +177,8 @@ class iniParser:
                 self.__fixIniFile()
                 return []
             else:
-                raise iniParserError, "File is corrupt: %s" % self.inifile
+                raise iniParserError("File is corrupt: %s"). \
+                    with_traceback(self.inifile)
         return ini.sections()
 
     def getSection(self, section):
@@ -190,7 +193,8 @@ class iniParser:
                 self.__fixIniFile()
                 return {}
             else:
-                raise iniParserError, "File is corrupt: %s" % self.inifile
+                raise iniParserError("File is corrupt: %s"). \
+                    with_traceback(self.inifile)
         if section not in ini.sections():
             return {}
         dct = {}
@@ -211,7 +215,8 @@ class iniParser:
                 self.setSection(section, dct)
                 return
             else:
-                raise iniParserError, "File is corrupt: %s" % self.inifile
+                raise iniParserError("File is corrupt: %s"). \
+                    with_traceback(self.inifile)
         if section not in ini.sections():
             ini.add_section(section)
         for key, value in dct.iteritems():
@@ -234,7 +239,8 @@ class iniParser:
                 self.__fixIniFile()
                 return
             else:
-                raise iniParserError, "File is corrupt: %s" % self.inifile
+                raise iniParserError("File is corrupt: %s"). \
+                        with_traceback(self.inifile)
         ini.remove_section(section)
         self.__writeIni(ini)
         self.__unlock()

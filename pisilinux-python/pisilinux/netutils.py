@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -96,7 +98,7 @@ class IF:
     def sysValue(self, name):
         path = os.path.join("/sys/class/net", self.name, name)
         if os.path.exists(path):
-            return file(path).read().rstrip("\n")
+            return open(path).read().rstrip("\n")
         else:
             return None
 
@@ -152,7 +154,7 @@ class IF:
         return nettype == ARPHRD_PPP
 
     def isWireless(self):
-        data = file("/proc/net/wireless").readlines()
+        data = open("/proc/net/wireless").readlines()
         for line in data[2:]:
             name = line[:line.find(": ")].strip()
             if name == self.name:
@@ -253,14 +255,14 @@ class IF:
     def stopAuto(self):
         # dhcpcd does not create a pid file until it gets
         # an ip address so dhcpcd -k does not work while cancelling
-        if subprocess.call(["/sbin/dhcpcd", "-k", self.name], stderr=file("/dev/null")):
+        if subprocess.call(["/sbin/dhcpcd", "-k", self.name], stderr=open("/dev/null")):
             subprocess.call(["pkill","-f","%s" % " ".join(self.autoCmd)])
 
     def isAuto(self):
         path = "/var/run/dhcpcd-%s.pid" % self.name
         if not os.path.exists(path):
             return False
-        pid = file(path).read().rstrip("\n")
+        pid = open(path).read().rstrip("\n")
         if not os.path.exists("/proc/%s" % pid):
             return False
         return True
@@ -276,7 +278,7 @@ class IF:
 
         info_file = self.autoInfoFile()
         try:
-            f = file(info_file)
+            f = open(info_file)
         except IOError:
             return None
 

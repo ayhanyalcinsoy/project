@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -35,12 +37,12 @@ def dir_size(dir):
         return getsize(dir)
 
     if islink(dir):
-        return long(len(os.readlink(dir)))
+        return int(len(os.readlink(dir)))
 
     def sizes():
         for root, dirs, files in os.walk(dir):
             yield sum([getsize(join(root, name)) for name in files if not islink(join(root,name))])
-            yield sum([long(len(os.readlink((join(root, name))))) for name in files if islink(join(root,name))])
+            yield sum([int(len(os.readlink((join(root, name))))) for name in files if islink(join(root,name))])
     return sum( sizes() )
 
 
@@ -55,13 +57,13 @@ def touch(filename):
         if os.path.exists(filename):
             os.utime(filename, None)
         else:
-            file(filename, "w").close()
-    except IOError, e:
+            open(filename, "w").close()
+    except IOError as e:
         if e.errno != 13:
             raise
         else:
             return False
-    except OSError, e:
+    except OSError as e:
         if e.errno != 13:
             raise
         else:

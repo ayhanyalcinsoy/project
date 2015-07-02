@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2010 TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/UEKAE
+# Copyright (C) 2012-2015, PisiLinux
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -29,9 +31,9 @@ class FileLock:
         if timeout != -1:
             _type |= fcntl.LOCK_NB
 
-        self.fd = os.open(self.filename, os.O_WRONLY | os.O_CREAT, 0600)
+        self.fd = os.open(self.filename, os.O_WRONLY | os.O_CREAT, 0o600)
         if self.fd == -1:
-            raise IOError, "Cannot create lock file"
+            raise IOError("Cannot create lock file")
 
         while True:
             try:
