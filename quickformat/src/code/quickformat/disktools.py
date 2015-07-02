@@ -1,7 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2006-2009 TUBITAK/BILGEM
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
+# Renan Çakırerk <renan at pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,8 +81,8 @@ def refreshPartitionTable(device):
 
     try:
         fd = os.open(device, os.O_RDONLY)
-    except EnvironmentError, (error, strerror):
-        print 'Could not open device %s. Reason: %s.'%(device, strerror)
+    except EnvironmentError as (error, strerror):
+        print('Could not open device %s. Reason: %s.')%(device, strerror)
         sys.exit(-1)
 
     # Sync and wait for Sync to complete
@@ -89,32 +92,32 @@ def refreshPartitionTable(device):
     # Call required ioctl to re-read partition table
     try:
         ioctl(fd, BLKRRPART())
-    except EnvironmentError, (error, message):
+    except EnvironmentError as (error, message):
         # Attempt ioctl call twice in case an older kernel (1.2.x) is being used
         os.system(PATH_SYNC)
         sleep(2)
 
         try:
             ioctl(fd, BLKRRPART())
-        except EnvironmentError, (error, strerror):
-            print 'IOCTL Error: %s for device %s.'%(strerror, device)
+        except EnvironmentError as (error, strerror):
+            print('IOCTL Error: %s for device %s.')%(strerror, device)
             sys.exit(-1)
 
-    print 'Successfully re-read partition table on device %s.'%(device)
+    print('Successfully re-read partition table on device %s.')%(device)
     # Sync file buffers
     os.fsync(fd)
     os.close(fd)
 
     # Final sync
-    print "Syncing %s ...  " % (device),
+    print("Syncing %s ...  ") % (device),
     os.system(PATH_SYNC)
     sleep(4) # for sync()
-    print "Done."
+    print("Done.")
 
 def mount(device, path):
     if not path:
-        path = getPath(device)
-        if not createPath(device, path):
+        path = getMounted(device)
+        if not mount(device, path):
             # Can't create new path
             #fail(_(FAIL_PATH) % path)
             pass

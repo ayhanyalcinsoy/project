@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011 TUBITAK/BILGEM
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
 # Renan Çakırerk <renan at pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,11 +21,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # (See COPYING)
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QSize, SIGNAL, QThread
+
+from PyQt5.QtCore import *
 from quickformat.disktools import *
 from subprocess import Popen, PIPE, STDOUT, call
 
+import os, sys
 import parted
 
 class Formatter(QThread):
@@ -48,7 +51,7 @@ class Formatter(QThread):
     def run(self):
         # Send signal for notification
         self.formatting = True
-        self.emit(SIGNAL("format_started()"))
+        self.emit(pyqtSignal("format_started()"))
 
         self.formatted = self.format_disk()
 
@@ -56,16 +59,16 @@ class Formatter(QThread):
             try:
                 refreshPartitionTable(self.volume.device_path)
             except:
-                print "ERROR: Cannot refresh partition table"
+                print("ERROR: Cannot refresh partition table")
 
-            self.emit(SIGNAL("format_successful()"))
+            self.emit(pyqtSignal("format_successful()"))
         else:
             if self.error:
                 self.error = False
-                self.emit(SIGNAL("partition_table_error()"))
+                self.emit(pyqtSignal("partition_table_error()"))
 
             else:
-                self.emit(SIGNAL("format_failed()"))
+                self.emit(pyqtSignal("format_failed()"))
 
         self.formatting = False
 
@@ -85,14 +88,14 @@ class Formatter(QThread):
             try:
                 os.chmod(device_path, mode)
                 os.chown(device_path, uid, gid)
-            except OSError, msg:
-                print msg
+            except OSError as msg:
+                print(msg)
                 #ctx.logger.debug("Unexpected error: %s" % msg)
 
     def _set_file_system_type(self):
         try:
-            print "---------------"
-            print "TRYING TO SET FILE SYSTEM of %s to %s" % (self.volume.device_path, self.new_file_system)
+            print("---------------")
+            print("TRYING TO SET FILE SYSTEM of %s to %s") % (self.volume.device_path, self.new_file_system)
 
             try:
                 parted_device = parted.Device(self.volume.device_path)
@@ -107,16 +110,16 @@ class Formatter(QThread):
 
             # Commit Changes
             parted_disk.commit()
-            print "SUCCCESS"
+            print("SUCCCESS")
         except Exception as e:
-            print "FAILED TO SET FILE SYSTEM", e.message
+            print("FAILED TO SET FILE SYSTEM"), e.message
             self.error = True
-            self.emit(SIGNAL("partition_table_error()"))
+            self.emit(pyqtSignal("partition_table_error()"))
 
     def _remove_volume_flags(self):
         try:
-            print "---------------"
-            print "TRYING TO REMOVE FLAGS of %s" % self.volume.device_path
+            print("---------------")
+            print("TRYING TO REMOVE FLAGS of %s") % self.volume.device_path
 
             parted_device = parted.Device(self.volume.device_path)
             parted_disk = parted.Disk(parted_device)
@@ -135,9 +138,9 @@ class Formatter(QThread):
 
             # Commit Changes
             parted_disk.commit()
-            print "SUCCCESS"
+            print("SUCCCESS")
         except Exception as e:
-            print "FAILED TO REMOVE FLAGS \n", e.message
+            print("FAILED TO REMOVE FLAGS \n"), e.message
 
     def format_disk(self):
         # If device is mounted then unmount
@@ -145,10 +148,10 @@ class Formatter(QThread):
         if self.is_device_mounted() == True:
             try:
                 umount(str(self.volume.path))
-                print "---------------"
-                print "TRYING TO UNMOUNT"
+                print("---------------")
+                print("TRYING TO UNMOUNT")
             except:
-                print "UNMOUNTING FAILED"
+                print("UNMOUNTING FAILED")
                 return False
 
         # If NTFS is selected then activate quick formating option
@@ -184,8 +187,8 @@ class Formatter(QThread):
 
         # Command to execute
         command = "mkfs -t %s %s %s '%s' %s -v" % (self.new_file_system, self.quickOption, self.labelingCommand, self.new_label, self.volume.path)
-        print "---------------"
-        print "COMMAND: %s" % command
+        print("---------------")
+        print("COMMAND: %s") % command
 
 
         # Execute
@@ -193,9 +196,9 @@ class Formatter(QThread):
 
         # If theres an error then emmit error signal
         output = proc.communicate()[0]
-        print "---------------"
-        print "OUTPUT: %s" % output
-        print "RETURN: %s" % proc.returncode
+        print("---------------")
+        print("OUTPUT: %s") % output
+        print("RETURN: %s") % proc.returncode
 
 
 

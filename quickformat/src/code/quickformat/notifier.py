@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-#  Copyright (C) 2011 TUBITAK/BILGEM
-#  Renan Çakırerk <renan at pardus.org.tr>
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
+# Renan Çakırerk <renan at pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,10 +21,10 @@
 #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #  (See COPYING)
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QSize, SIGNAL, QThread
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
-from PyKDE4.kdecore import i18n
 
 from notifier_backend import PAbstractBox
 from notifier_backend import OUT, TOPCENTER, MIDCENTER, CURRENT, OUT
@@ -37,30 +39,30 @@ class Notifier(PAbstractBox):
     def __init__(self, parent):
         PAbstractBox.__init__(self, parent)
 
-        self.verticalLayout = QtGui.QVBoxLayout(self)
+        self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setSpacing(20)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        spacerItem = QtGui.QSpacerItem(20, 139, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QSpacerItem(20, 139, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout.addItem(spacerItem)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setSpacing(10)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
 
-        self.icon = QtGui.QLabel(self)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        self.icon = QLabel(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(32)
         sizePolicy.setVerticalStretch(32)
         sizePolicy.setHeightForWidth(self.icon.sizePolicy().hasHeightForWidth())
         self.icon.setSizePolicy(sizePolicy)
-        self.icon.setMinimumSize(QtCore.QSize(32, 32))
-        self.icon.setMaximumSize(QtCore.QSize(32, 32))
+        self.icon.setMinimumSize(QSize(32, 32))
+        self.icon.setMaximumSize(QSize(32, 32))
         self.icon.setText("")
-        self.icon.setPixmap(QtGui.QPixmap(ICON_SUCCESS))
-        self.icon.setAlignment(QtCore.Qt.AlignCenter)
+        self.icon.setPixmap(QPixmap(ICON_SUCCESS))
+        self.icon.setAlignment(Qt.AlignCenter)
         self.icon.setObjectName("icon")
         self.horizontalLayout_2.addWidget(self.icon)
 
@@ -69,15 +71,15 @@ class Notifier(PAbstractBox):
         self.busy.setFixedSize(30, 30)
         self.horizontalLayout_2.addWidget(self.busy)
 
-        self.label = QtGui.QLabel(self)
+        self.label = QLabel(self)
         self.label.setText("                                 ")
         self.label.setMinimumHeight(30)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignCenter)
         # Word wrap
         self.label.setWordWrap(False)
 
@@ -86,25 +88,25 @@ class Notifier(PAbstractBox):
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
 
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
 
-        self.okButton = QtGui.QPushButton(self)
+        self.okButton = QPushButton(self)
         self.okButton.setStyleSheet("color: #222222")
         self.okButton.setObjectName("okButton")
         self.okButton.setText(i18n("OK"))
         self.okButton.hide()
 
         self.horizontalLayout.addWidget(self.okButton)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem5 = QtGui.QSpacerItem(20, 138, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem5 = QSpacerItem(20, 138, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem5)
 
         self._animation = 2
@@ -118,7 +120,7 @@ class Notifier(PAbstractBox):
         self.okButton.hide()
 
     def set_message(self, message, button=False, indicator=False, icon=None):
-        self.icon.setPixmap(QtGui.QPixmap(icon))
+        self.icon.setPixmap(QPixmap(icon))
 
         if message == '':
             self.label.hide()
@@ -139,7 +141,7 @@ class Notifier(PAbstractBox):
                 self.busy.hide()
 
             self.label.setText(message)
-            self.label.setAlignment(QtCore.Qt.AlignCenter)
+            self.label.setAlignment(Qt.AlignCenter)
 
         self.label.adjustSize()
         self.adjustSize()

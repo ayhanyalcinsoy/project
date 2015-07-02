@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-#  Copyright (C) 2011 TUBITAK/BILGEM
-#  Renan Çakırerk <renan at pardus.org.tr>
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
+# Renan Çakırerk <renan at pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,13 +21,10 @@
 #  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #  (See COPYING)
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QVariant, QSize, SIGNAL, QThread
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-from PyKDE4 import kdeui
-from PyKDE4.kdecore import i18n
-from PyKDE4.solid import Solid
-from PyKDE4.kdecore import KCmdLineArgs
 
 from quickformat.ui_quickformat import Ui_QuickFormat
 from quickformat.formatter import Formatter
@@ -93,20 +92,20 @@ class Volume():
         try:
             return self.volume.parent().asDeviceInterface(Solid.StorageDrive.StorageDrive).driveType()
         except:
-            print "WARNING: get_device_type (no parent?) -> %s" % self.path
+            print("WARNING: get_device_type (no parent?) -> %s") % self.path
 
     def get_device_bus(self):
         """ returns the bus of the device """
         try:
             return self.volume.parent().asDeviceInterface(Solid.StorageDrive.StorageDrive).bus()
         except:
-            print "WARNING: get_device_bus (no parent?) -> %s" % self.path
+            print("WARNING: get_device_bus (no parent?) -> %s") % self.path
 
     def get_device_path(self):
         try:
             return str(self.volume.parent().asDeviceInterface(Solid.Block.Block).device())
         except:
-            print "WARNING: get_device_path (no parent?) -> %s" % self.path
+            print("WARNING: get_device_path (no parent?) -> %s") % self.path
             return self.path
 
     def get_device_name(self):
@@ -119,7 +118,7 @@ class Volume():
     def get_volume_icon(self):
         icon = str(self.volume.icon())
         iconPath = ":/images/images/" + icon + ".png"
-        return QtGui.QPixmap(iconPath)
+        return QPixmap(iconPath)
 
     def get_volume_name(self):
         return str(self.volume.product())
@@ -134,9 +133,9 @@ class Volume():
         return self.volume.asDeviceInterface(Solid.StorageVolume.StorageVolume).size()
 
 
-class VolumeUiItem(Ui_VolumeItem, QtGui.QWidget):
+class VolumeUiItem(Ui_VolumeItem, QWidget):
     def __init__(self, volume, parent = None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.setupUi(self)
 
         self.device.hide()
@@ -166,9 +165,9 @@ class VolumeUiItem(Ui_VolumeItem, QtGui.QWidget):
         return size
 
 
-class QuickFormat(QtGui.QWidget):
+class QuickFormat(QWidget):
     def __init__(self, parent = None, args = None):
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.__sysargs = args
 
         self.ui = Ui_QuickFormat()
@@ -204,8 +203,8 @@ class QuickFormat(QtGui.QWidget):
 
         # Monitor USB ports for any new devices
         notifier = Solid.DeviceNotifier().instance()
-        self.connect(notifier, SIGNAL("deviceAdded(const QString&)"), self.slot_refresh_volume_list)
-        self.connect(notifier, SIGNAL("deviceRemoved(const QString&)"), self.slot_refresh_volume_list)
+        self.connect(notifier, pyqtSignal("deviceAdded(const QString&)"), self.slot_refresh_volume_list)
+        self.connect(notifier, pyqtSignal("deviceRemoved(const QString&)"), self.slot_refresh_volume_list)
 
     def __make_initial_selection__(self, index):
         self.ui.volumeName.setCurrentIndex(index)
@@ -222,7 +221,7 @@ class QuickFormat(QtGui.QWidget):
         self.notifier.label.adjustSize()
 
     def __set_custom_widgets__(self):
-        self.ui.listWidget = QtGui.QListWidget(self)
+        self.ui.listWidget = QListWidget(self)
         self.ui.volumeName.setModel(self.ui.listWidget.model())
         self.ui.volumeName.setView(self.ui.listWidget)
 
@@ -233,15 +232,15 @@ class QuickFormat(QtGui.QWidget):
                 self.volumePathArg = self.__sysargs[1]
 
     def __init_signals__(self):
-        self.connect(self.ui.volumeName, SIGNAL("activated(int)"), self.set_info)
-        self.connect(self.ui.btn_format, SIGNAL("clicked()"), self.format_device)
-        self.connect(self.ui.btn_cancel, SIGNAL("clicked()"), self.close)
+        self.connect(self.ui.volumeName, pyqtSignal("activated(int)"), self.set_info)
+        self.connect(self.ui.btn_format, pyqtSignal("clicked()"), self.format_device)
+        self.connect(self.ui.btn_cancel, pyqtSignal("clicked()"), self.close)
 
         # Formatter signals
-        self.connect(self.formatter, SIGNAL("format_started()"), self.slot_format_started)
-        self.connect(self.formatter, SIGNAL("format_successful()"), self.slot_format_successful)
-        self.connect(self.formatter, SIGNAL("format_failed()"), self.slot_format_failed)
-        self.connect(self.formatter, SIGNAL("partition_table_error()"), self.slot_partition_table_error)
+        self.connect(self.formatter, pyqtSignal("format_started()"), self.slot_format_started)
+        self.connect(self.formatter, pyqtSignal("format_successful()"), self.slot_format_successful)
+        self.connect(self.formatter, pyqtSignal("format_failed()"), self.slot_format_failed)
+        self.connect(self.formatter, pyqtSignal("partition_table_error()"), self.slot_partition_table_error)
 
     def filter_file_system(self, volume):
         if volume.has_accepted_bus() and volume.has_accepted_drivetype():
@@ -278,7 +277,7 @@ class QuickFormat(QtGui.QWidget):
 
             # Auto-hide notifier
             if not self.formatter.formatting and not self.first_run and self.notifier.okButton.isHidden():
-                QtCore.QTimer.singleShot(2000, self.hide_notifier)
+                QTimer.singleShot(2000, self.hide_notifier)
 
             self.set_info()
 
@@ -307,7 +306,7 @@ class QuickFormat(QtGui.QWidget):
 
     def no_device_notification(self):
         if self.first_run:
-            msgBox = QtGui.QMessageBox(1, i18n("QuickFormat"), i18n("There aren't any removable devices."))
+            msgBox = QMessageBox(1, i18n("QuickFormat"), i18n("There aren't any removable devices."))
             msgBox.exec_()
             sys.exit()
         else:
@@ -373,7 +372,7 @@ class QuickFormat(QtGui.QWidget):
             self.ui.fileSystem.setCurrentIndex(fsIndex)
         except:
             self.ui.fileSystem.setCurrentIndex(0)
-            print "Cannot match file system. Selecting Ext2 as default."
+            print("Cannot match file system. Selecting Ext2 as default.")
 
         self.ui.volumeLabel.setText(volume.name)
         self.ui.icon.setPixmap(volume.icon)
@@ -396,7 +395,7 @@ class QuickFormat(QtGui.QWidget):
         # Create an empty list widget item
         # First parameter is the text shown on the combobox when a selection is made
         selectionText = self._prepare_selection_text(volume)
-        item = QtGui.QListWidgetItem(selectionText, self.ui.listWidget)
+        item = QListWidgetItem(selectionText, self.ui.listWidget)
 
         # Add whole volume as the item data
         item.setData(32, QVariant(volume))
@@ -422,8 +421,9 @@ if __name__ == "__main__":
         from dbus.mainloop.qt import DBusQtMainLoop
         DBusQtMainLoop(set_as_default = True)
 
-    KCmdLineArgs.init(sys.argv, aboutData)
-    app = kdeui.KApplication()
+    #KCmdLineArgs.init(sys.argv, aboutData)
+    #app = kdeui.KApplication()
+    app = QGuiApplication
 
     quick_format = QuickFormat(args = args)
     quick_format.show()

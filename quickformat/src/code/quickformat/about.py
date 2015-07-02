@@ -1,8 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011 TUBITAK/BILGEM
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
 # Renan Çakırerk <renan at pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,21 +21,19 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # (See COPYING)
 
-# PyKDE
-from PyKDE4.kdecore import KAboutData, ki18n
 
 # Application Data
 appName     = "quickformat"
-programName = ki18n("Quick Format")
+programName = i18n("Quick Format")
 version     = "1.0.0"
-description = ki18n("Removable Device Formatting Tool")
-license     = KAboutData.License_GPL
-copyright   = ki18n("(c) 2011 TUBITAK/BILGEM")
-text        = ki18n(None)
-homePage    = "http://www.pardus.org.tr/eng/projects"
-bugEmail    = "bugs@pardus.org.tr"
+description = i18n("Removable Device Formatting Tool")
+license     = GPL
+copyright   = i18n("Pisilinux Community")
+text        = i18n(None)
+homePage    = "https://github.com/pisilinux/project"
+bugEmail    = "admins@pisilinux.org"
 catalog     = appName
 aboutData   = KAboutData(appName, catalog, programName, version, description, license, copyright, text, homePage, bugEmail)
 
 # Author(s)
-aboutData.addAuthor(ki18n("Renan Cakirerk"), ki18n("Current Maintainer"))
+aboutData.addAuthor(i18n("Renan Cakirerk"), i18n("Current Maintainer"))

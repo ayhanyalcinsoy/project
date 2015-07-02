@@ -1,11 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Pardus Desktop Services
-# GUI Module ~ gui.py
-
-# Copyright (C) 2010, TUBITAK/UEKAE
+# Forked from Pardus by TUBITAK/BILGEM
+# Copyright (C) 2012 - 2015 PisiLinux
 # 2010 - Gökmen Göksel <gokmen:pardus.org.tr>
+# 2015 - Ayhan Yalçınsoy
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -16,17 +15,9 @@
 import copy
 
 # Qt Libraries
-from PyQt4 import QtGui
-from PyQt4 import QtCore
-
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import QSize
-
-from PyQt4.QtGui import QColor
-from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QPainter
-from PyQt4.QtGui import QPalette
-
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 # PREDEFINED POSITIONS
 # --------------------
@@ -35,24 +26,24 @@ from PyQt4.QtGui import QPalette
  BOTLEFT, BOTCENTER, BOTRIGHT,
  CURRENT) = range(10)
 # --------------------
-FORWARD = QtCore.QTimeLine.Forward
-BACKWARD = QtCore.QTimeLine.Backward
+FORWARD = QTimeLine.Forward
+BACKWARD = QTimeLine.Backward
 # --------------------
 (IN, OUT, FINISHED) = range(3)
 # --------------------
 
-class PAbstractBox(QtGui.QWidget):
+class PAbstractBox(QWidget):
     def __init__(self, parent):
 
         # Overlay widget, it should be initialized at first
-        self.__overlay = QtGui.QWidget(parent)
+        self.__overlay = QWidget(parent)
         self.__overlay.hide()
         self.__overlay_enabled = False
         self.__overlay_animated = False
         self.__overlay_styled = False
 
         # Main widget initializing on parent widget
-        QtGui.QWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
         self.hide()
 
         # Pre-defined states
@@ -119,13 +110,13 @@ class PAbstractBox(QtGui.QWidget):
 
     def _initializeTimeLines(self):
         # Timeline for X coordinate
-        self.__sceneX = QtCore.QTimeLine()
+        self.__sceneX = QTimeLine()
 
         # Timeline for Y coordinate
-        self.__sceneY = QtCore.QTimeLine()
+        self.__sceneY = QTimeLine()
 
         # Timeline for fade-effect of overlay
-        self.__sceneF = QtCore.QTimeLine()
+        self.__sceneF = QTimeLine()
 
         # Set overlay animation
         if self.__overlay_enabled:
@@ -133,10 +124,10 @@ class PAbstractBox(QtGui.QWidget):
 
     def enableShadow(self, offset = 3, radius = 9, color = 'black'):
         # Enable shadow for mainwidget with given features
-        self.__effect = QtGui.QGraphicsDropShadowEffect(self)
+        self.__effect = QGraphicsDropShadowEffect(self)
         self.__effect.setBlurRadius(radius)
         self.__effect.setOffset(offset)
-        self.__effect.setColor(QtGui.QColor(color))
+        self.__effect.setColor(QColor(color))
         self.setGraphicsEffect(self.__effect)
 
     def enableOverlay(self, animated = False, use_style = True):
@@ -169,7 +160,7 @@ class PAbstractBox(QtGui.QWidget):
     def animate(self, direction = IN, move_direction = FORWARD, start = TOPCENTER, stop = BOTCENTER, start_after = None, duration = 0, dont_animate = False):
 
         if start_after:
-            if start_after.state() == QtCore.QTimeLine.Running:
+            if start_after.state() == QTimeLine.Running:
                 # If there is an animation started before this one, we can easily start it when the old one finishes
                 start_after.finished.connect(lambda: self._animate(direction, move_direction, start, stop, duration))
                 return
@@ -197,13 +188,13 @@ class PAbstractBox(QtGui.QWidget):
 
         # Set X coordinate timeline settings
         self.__sceneX.setDirection(move_direction)
-        self.__sceneX.setEasingCurve(QtCore.QEasingCurve(self._animation))
+        self.__sceneX.setEasingCurve(QEasingCurve(self._animation))
         self.__sceneX.setDuration(duration)
         self.__sceneX.setUpdateInterval(20)
 
         # Set Y coordinate timeline settings
         self.__sceneY.setDirection(move_direction)
-        self.__sceneY.setEasingCurve(QtCore.QEasingCurve(self._animation))
+        self.__sceneY.setEasingCurve(QEasingCurve(self._animation))
         self.__sceneY.setDuration(duration)
         self.__sceneY.setUpdateInterval(20)
 
@@ -289,7 +280,7 @@ class PAbstractBox(QtGui.QWidget):
             self.runCallBacks(FINISHED)
         else:
             # Start the animation !
-            if self.__sceneX.state() == QtCore.QTimeLine.NotRunning:
+            if self.__sceneX.state() == QTimeLine.NotRunning:
                 self.__sceneX.start()
                 self.__sceneY.start()
                 if not just_resize:
