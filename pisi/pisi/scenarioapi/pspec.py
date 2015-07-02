@@ -119,9 +119,9 @@ class Pspec:
         self.pspec.source.description["en"] = description
 
     def set_packager(self, name, email):
-        self.pspec.source.packager.name = unicode(name)
+        self.pspec.source.packager.name = str(name)
         self.pspec.source.packager.email = email
-        self.update.name = unicode(name)
+        self.update.name = str(name)
         self.update.email = email
 
     def add_archive(self, sha1sum, type, uri):

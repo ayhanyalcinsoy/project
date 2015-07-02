@@ -627,10 +627,10 @@ class Builder:
         try:
             buf = open(fname).read()
             return compile(buf, fname, "exec")
-        except IOError, e:
+        except IOError as e:
             raise Error(_("Unable to read Actions Script (%s): %s")
                         % (fname, e))
-        except SyntaxError, e:
+        except SyntaxError as e:
             raise Error(_("SyntaxError in Actions Script (%s): %s")
                         % (fname, e))
 
@@ -642,7 +642,7 @@ class Builder:
         try:
             localSymbols = globalSymbols = {}
             exec compiled_script in localSymbols, globalSymbols
-        except Exception, e:
+        except Exception as e:
             import traceback
             traceback.print_exc(e)
             raise ActionScriptException
@@ -660,10 +660,10 @@ class Builder:
                 try:
                     buf = open(fname).read()
                     compile(buf, "error", "exec")
-                except IOError, e:
+                except IOError as e:
                     raise Error(_("Unable to read COMAR script (%s): %s")
                                 % (fname, e))
-                except SyntaxError, e:
+                except SyntaxError as e:
                     raise Error(_("SyntaxError in COMAR file (%s): %s")
                                 % (fname, e))
 
@@ -940,7 +940,7 @@ class Builder:
         for fileinfo in self.files.list:
             size += fileinfo.size
 
-        metadata.package.installedSize = long(size)
+        metadata.package.installedSize = int(size)
 
         self.metadata = metadata
 
@@ -977,7 +977,7 @@ class Builder:
                     continue
                 frpath = util.removepathprefix(install_dir, fpath)  # relative path
                 ftype, permanent = get_file_type(frpath, package.files)
-                fsize = long(util.dir_size(fpath))
+                fsize = int(util.dir_size(fpath))
                 if not os.path.islink(fpath):
                     st = os.stat(fpath)
                 else:
@@ -1278,7 +1278,7 @@ def build(pspec):
         pb = Builder.from_name(pspec)
     try:
         pb.build()
-    except ActionScriptException, e:
+    except ActionScriptException as e:
         ctx.ui.error(_("Action script error caught."))
         raise e
     finally:

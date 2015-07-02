@@ -342,7 +342,7 @@ def dir_size(_dir):
         return os.path.getsize(_dir)
 
     if os.path.islink(_dir):
-        return long(len(read_link(_dir)))
+        return int(len(read_link(_dir)))
 
     def sizes():
         for root, dirs, files in os.walk(_dir):
@@ -475,7 +475,7 @@ def sha1_file(filename):
             # we wont have two allocated blocks with same size
             del block
         return m.hexdigest()
-    except IOError, e:
+    except IOError as e:
         if e.errno == 13:
             # Permission denied, the file doesn't have read permissions, skip
             raise FilePermissionDeniedError(_("You don't have necessary read permissions"))
@@ -497,7 +497,7 @@ def uncompress(patchFile, compressType="gz", targetDir=""):
     archive = pisi.archive.Archive(patchFile, compressType)
     try:
         archive.unpack(targetDir)
-    except Exception, msg:
+    except Exception as msg:
         raise Error(_("Error while decompressing %s: %s") % (patchFile, msg))
 
     # FIXME: Get file path from Archive instance
@@ -888,7 +888,7 @@ def rmdirs(dirpath):
 def letters():
     start = end = None
     result = []
-    for index in xrange(sys.maxunicode + 1):
+    for index in range(sys.maxunicode + 1):
         c = unichr(index)
         if unicodedata.category(c)[0] == 'L':
             if start is None:

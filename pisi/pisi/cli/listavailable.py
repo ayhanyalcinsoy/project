@@ -73,7 +73,7 @@ all repositories.
         if component:
             try:
                 l = self.componentdb.get_packages(component, repo=repo, walk=True)
-            except Exception, e:
+            except Exception as e:
                 return
         else:
             l = pisi.api.list_available(repo)
@@ -97,7 +97,7 @@ all repositories.
                 package.name = util.colorize(package.name, 'brightwhite')
 
             if self.options.long:
-                ctx.ui.info(unicode(package)+'\n')
+                ctx.ui.info(package+'\n')
             else:
                 package.name += ' ' * max(0, maxlen - len(p))
-                ctx.ui.info('%s - %s ' % (package.name, unicode(package.summary)))
+                ctx.ui.info('%s - %s ' % (package.name, package.summary))

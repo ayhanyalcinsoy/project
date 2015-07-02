@@ -35,7 +35,7 @@ if __name__ == "__main__":
     try:
         packages = scanPSPEC(sys.argv[1])
     except:
-        print "Usage: cleanArchives.py path2repo"
+        print("Usage: cleanArchives.py path2repo")
         sys.exit(1)
 
     if "--dry-run" in sys.argv:

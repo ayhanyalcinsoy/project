@@ -24,7 +24,7 @@ class _constant:
         if self.__dict__.has_key(name):
             raise self.ConstError, "Can't unbind constant: %s" % name
         # we don't have an attribute by this name
-        raise NameError, name
+        raise NameError(name)
 
 class Constants:
 

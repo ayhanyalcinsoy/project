@@ -72,10 +72,10 @@ Lists previous operations.""")
                 print _("    * There are %d packages in this snapshot.") % len(operation.packages)
             elif operation.type == "repoupdate":
                 for repo in operation.repos:
-                    print "    *",  repo
+                    print("    *"),  repo
             else:
                 for pkg in operation.packages:
-                    print "    *",  pkg
+                    print("    *"),  pkg
             print
 
     def redirect_output(self, func):

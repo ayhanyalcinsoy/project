@@ -109,10 +109,10 @@ class LocalText(dict):
                 return lang[0:2]
         except KeyboardInterrupt:
             raise
-        except Exception, e: #FIXME: what exception could we catch here, replace with that.
+        except Exception as e: #FIXME: what exception could we catch here, replace with that.
             raise Error(_('LocalText: unable to get either current or default locale'))
 
-    def errors(self, where = unicode()):
+    def errors(self, where = ()):
         errs = []
         langs = [ LocalText.get_lang(), 'en', 'tr', ]
         if self.keys() and not util.any(lambda x : self.has_key(x), langs):
@@ -146,15 +146,15 @@ class LocalText(dict):
     def __str__(self):
         L = LocalText.get_lang()
         if self.has_key(L):
-            return unicode(self[L])
+            return (self[L])
         elif self.has_key('en'):
             # fallback to English, blah
-            return unicode(self['en'])
+            return (self['en'])
         elif self.has_key('tr'):
             # fallback to Turkish
-            return unicode(self['tr'])
+            return (self['tr'])
         else:
-            return unicode()
+            return ()
 
 class Writer(formatter.DumbWriter):
     """adds unicode support"""
@@ -336,7 +336,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         cls.__init__ = initialize
 
         cls.decoders = decoders
-        def decode(self, node, errs, where = unicode(cls.tag)):
+        def decode(self, node, errs, where = (cls.tag)):
             for base in cls.autoxml_bases:
                 base.decode(self, node, errs, where)
             for decode_member in decoders:#self.__class__.decoders:
@@ -356,7 +356,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         cls.encode = encode
 
         cls.errorss = errorss
-        def errors(self, where = unicode(name)):
+        def errors(self, where = (name)):
             errs = []
             for base in cls.autoxml_bases:
                 errs.extend(base.errors(self, where))
@@ -409,7 +409,7 @@ class autoxml(oo.autosuper, oo.autoprop):
                             return False
                     except KeyboardInterrupt:
                         raise
-                    except Exception, e: #FIXME: what exception could we catch here, replace with that.
+                    except Exception as e: #FIXME: what exception could we catch here, replace with that.
                         return False
                 return True
             def notequal(self, other):
@@ -554,7 +554,7 @@ class autoxml(oo.autosuper, oo.autoprop):
 
         def decode(self, node, errs, where):
             """decode component from DOM node"""
-            setattr(self, name, decode_a(node, errs, where + '.' + unicode(name)))
+            setattr(self, name, decode_a(node, errs, where + '.' + str(name)))
 
         def encode(self, node, errs):
             """encode self inside, possibly new, DOM node using xml"""
@@ -602,7 +602,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         "returns split of the tag path into last tag and the rest"
         try:
             lastsep = tagpath.rindex('/')
-        except ValueError, e:
+        except ValueError as e:
             return ('', tagpath)
         return (tagpath[:lastsep], tagpath[lastsep+1:])
 
@@ -651,7 +651,7 @@ class autoxml(oo.autosuper, oo.autoprop):
                     value = autoxml.basic_cons_map[token_type](text)
                 except KeyboardInterrupt:
                     raise
-                except Exception, e: #FIXME: what exception could we catch here, replace with that.
+                except Exception as e: #FIXME: what exception could we catch here, replace with that.
                     value = None
                     errs.append(where + ': ' + _('Type mismatch: read text cannot be decoded'))
                 return value
@@ -663,7 +663,7 @@ class autoxml(oo.autosuper, oo.autoprop):
         def encode(node, value, errs):
             """encode given value inside DOM node"""
             if value is not None:
-                writetext(node, token, unicode(value))
+                writetext(node, token, str(value))
             else:
                 if req == mandatory:
                     errs.append(_('Mandatory token %s not available') % token)
@@ -677,7 +677,7 @@ class autoxml(oo.autosuper, oo.autoprop):
 
         def format(value, f, errs):
             """format value for pretty printing"""
-            f.add_literal_data(unicode(value))
+            f.add_literal_data(str(value))
 
         return initialize, decode, encode, errors, format
 
@@ -765,7 +765,7 @@ class autoxml(oo.autosuper, oo.autoprop):
             for node in nodes:
                 dummy = xmlext.newNode(node, "Dummy")
                 xmlext.addNode(dummy, '', node)
-                l.append(decode_item(dummy, errs, where + unicode("[%s]" % ix)))
+                l.append(decode_item(dummy, errs, where + str("[%s]" % ix)))
                 #l.append(decode_item(node, errs, where + unicode("[%s]" % ix)))
                 ix += 1
             return l
@@ -859,8 +859,8 @@ class autoxml(oo.autosuper, oo.autoprop):
 
     basic_cons_map = {
         types.StringType : str,
-        types.UnicodeType : unicode,
+        types.UnicodeType : str,
         types.IntType : int,
         types.FloatType : float,
-        types.LongType : long
+        types.LongType : int
         }

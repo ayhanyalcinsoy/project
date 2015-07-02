@@ -75,7 +75,7 @@ class URI(object):
 
     def set_auth_info(self, authTuple):
         if not isinstance(authTuple, tuple):
-            raise Exception, _("setAuthInfo needs a tuple (user, pass)")
+            raise Exception(_("setAuthInfo needs a tuple (user, pass)"))
         self.__authinfo = authTuple
 
     def auth_info(self):

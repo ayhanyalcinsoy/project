@@ -568,9 +568,9 @@ class Remove(AtomicOperation):
         self.store_old_paths = store_old_paths
         try:
             self.files = self.installdb.get_files(self.package_name)
-        except pisi.Error, e:
+        except pisi.Error as e:
             # for some reason file was deleted, we still allow removes!
-            ctx.ui.error(unicode(e))
+            ctx.ui.error(str(e))
             ctx.ui.warning(_('File list could not be read for package %s, continuing removal.') % package_name)
             self.files = pisi.files.Files()
 

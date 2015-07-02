@@ -166,7 +166,7 @@ class Fetcher:
                            reget        = self._test_range_support(),
                            copy_local   = 1,
                            user_agent   = 'PiSi Fetcher/' + pisi.__version__)
-        except urlgrabber.grabber.URLGrabError, e:
+        except urlgrabber.grabber.URLGrabError as e:
             raise FetchError(_('Could not fetch destination file "%s": %s') % (self.url.get_uri(), e))
 
         if os.stat(self.partial_file).st_size == 0:

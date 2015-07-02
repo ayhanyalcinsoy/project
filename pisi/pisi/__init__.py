@@ -30,7 +30,7 @@ class Exception(Exception):
         for x in self.args:
             if s != '':
                 s += '\n'
-            s += unicode(x)
+            s += str(x)
         return s
 
 class Error(Exception):

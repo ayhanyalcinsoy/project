@@ -36,6 +36,6 @@ Lists packages waiting to be configured.
         A = pisi.api.list_pending()
         if len(A):
             for p in pisi.api.generate_pending_order(A):
-                print p
+                print(p)
         else:
             ctx.ui.info(_('There are no packages waiting to be configured'))

@@ -20,7 +20,7 @@ installdb = pisi.db.installdb.InstallDB()
 
 def ask_action(msg, actions, default):
     while True:
-        s = raw_input(msg)
+        s = input(msg)
         if len(s) == 0:
             return default
         else:
@@ -75,7 +75,7 @@ def check_changes():
 
 if __name__ == "__main__":
      if len(sys.argv) == 1:
-         print "Checking all packages"
+         print("Checking all packages")
          check_changes()
      if len(sys.argv) == 2:
          check_package(sys.argv[1])

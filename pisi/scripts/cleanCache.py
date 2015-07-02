@@ -42,14 +42,14 @@ def doit(root, listdir, clean, suffix = ""):
     for f in listdir:
         target = os.path.join(root, "%s%s" % (f, suffix))
         if os.path.exists(target):
-            print "%s%s" % (f, suffix)
+            print( "%s%s") % (f, suffix)
             if clean == True:
                 try:
                     if os.path.isdir(target):
                         shutil.rmtree(target)
                     else:
                         os.remove(target)
-                except OSError,e :
+                except OSError as e :
                     usage("Permission denied: %s" % e)
 
 
@@ -71,13 +71,13 @@ def cleanBuilds(clean, root = '/var/pisi'):
     doit(root, l, clean)
 
 def usage(msg):
-    print """
+    print("""
 Error: %s
 
 Usage:
     cleanCache --dry-run    (Shows unneeded files)
     cleanCache --clean      (Removes unneeded files)
-    """ % msg
+    """) % msg
 
     sys.exit(1)
 

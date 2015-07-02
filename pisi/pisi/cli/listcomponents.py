@@ -53,10 +53,10 @@ repositories.
         for p in l:
             component = self.componentdb.get_component(p)
             if self.options.long:
-                ctx.ui.info(unicode(component))
+                ctx.ui.info(component)
             else:
                 lenp = len(p)
                 #if p in installed_list:
                 #    p = util.colorize(p, 'cyan')
                 p = p + ' ' * max(0, 15 - lenp)
-                ctx.ui.info('%s - %s ' % (component.name, unicode(component.summary)))
+                ctx.ui.info('%s - %s ' % (component.name, component.summary))

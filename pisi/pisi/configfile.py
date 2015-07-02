@@ -126,7 +126,7 @@ class ConfigurationSection(object):
             self.defaults = DirectoriesDefaults
         else:
             e = _("No section by name '%s'") % section
-            raise Error, e
+            raise Error(e)
 
         self.section = section
 

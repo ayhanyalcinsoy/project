@@ -765,7 +765,7 @@ def info_name(package_name, useinstalldb=False):
     if useinstalldb and installdb.has_package(package.name):
         try:
             files = installdb.get_files(package.name)
-        except pisi.Error, e:
+        except pisi.Error as e:
             ctx.ui.warning(e)
             files = None
     else:
@@ -843,7 +843,7 @@ def __update_repo(repo, force=False):
         repouri = repodb.get_repo(repo).indexuri.get_uri()
         try:
             index.read_uri_of_repo(repouri, repo)
-        except pisi.file.AlreadyHaveException, e:
+        except pisi.file.AlreadyHaveException as e:
             ctx.ui.info(_('%s repository information is up-to-date.') % repo)
             if force:
                 ctx.ui.info(_('Updating database at any rate as requested'))
@@ -856,7 +856,7 @@ def __update_repo(repo, force=False):
 
         try:
             index.check_signature(repouri, repo)
-        except pisi.file.NoSignatureFound, e:
+        except pisi.file.NoSignatureFound as e:
             ctx.ui.warning(e)
 
         ctx.ui.info(_('Package database updated.'))

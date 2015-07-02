@@ -256,7 +256,7 @@ class File:
                 sigfilename = File.download(pisi.uri.URI(uri + '.sig'), transfer_dir)
             except KeyboardInterrupt:
                 raise
-            except Exception, e: #FIXME: what exception could we catch here, replace with that.
+            except Exception as e: #FIXME: what exception could we catch here, replace with that.
                 raise NoSignatureFound(uri)
             if os.system('gpg --verify ' + sigfilename) != 0:
                 raise InvalidSignature(uri)

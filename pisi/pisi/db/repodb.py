@@ -170,7 +170,7 @@ class RepoDB(lazydb.LazyDB):
 
         try:
             return piksemel.parse(index_path)
-        except Exception, e:
+        except Exception as e:
             raise RepoError(_("Error parsing repository index information. Index file does not exist or is malformed."))
 
     def get_repo(self, repo):

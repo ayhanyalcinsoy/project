@@ -64,7 +64,7 @@ class Package:
 
         try:
             self.impl = archive.ArchiveZip(self.filepath, 'zip', mode)
-        except IOError, e:
+        except IOError as e:
             raise Error(_("Cannot open package file: %s") % e)
 
         self.install_archive = None
@@ -217,7 +217,7 @@ class Package:
                 if os.path.isfile(tarinfo.name) or os.path.islink(tarinfo.name):
                     try:
                         os.unlink(tarinfo.name)
-                    except OSError, e:
+                    except OSError as e:
                         ctx.ui.warning(e)
 
             else:

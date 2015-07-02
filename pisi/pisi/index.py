@@ -188,7 +188,7 @@ def add_package(params):
 
         package = pisi.package.Package(path, 'r')
         md = package.get_metadata()
-        md.package.packageSize = long(os.path.getsize(path))
+        md.package.packageSize = int(os.path.getsize(path))
         md.package.packageHash = util.sha1_file(path)
         if ctx.config.options and ctx.config.options.absolute_urls:
             md.package.packageURI = os.path.realpath(path)
@@ -200,7 +200,7 @@ def add_package(params):
         if md.errors():
             ctx.ui.info("")
             ctx.ui.error(_('Package %s: metadata corrupt, skipping...') % md.package.name)
-            ctx.ui.error(unicode(Error(*errs)))
+            ctx.ui.error(str(Error(*errs)))
         else:
             # No need to carry these with index (#3965)
             md.package.files = None

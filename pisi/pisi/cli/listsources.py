@@ -51,10 +51,10 @@ Gives a brief list of sources published in the repositories.
             sf, repo = self.sourcedb.get_spec_repo(p)
             if self.options.long:
                 ctx.ui.info('[Repository: ' + repo + ']')
-                ctx.ui.info(unicode(sf.source))
+                ctx.ui.info(sf.source)
             else:
                 lenp = len(p)
                 #if p in installed_list:
                 #    p = util.colorize(p, 'cyan')
                 p = p + ' ' * max(0, 15 - lenp)
-                ctx.ui.info('%s - %s' % (sf.source.name, unicode(sf.source.summary)))
+                ctx.ui.info('%s - %s' % (sf.source.name, sf.source.summary))
